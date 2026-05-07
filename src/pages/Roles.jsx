@@ -149,7 +149,7 @@ async function loadPermissions() {
       alert('Error: ' + error.message)
     } else {
       alert('Role updated successfully')
-      await addAuditLog('CREATE_ROLE', `Created role: ${formData.role_name.trim()}`)
+      await addAuditLog('EDIT_ROLE', `Updated role: ${formData.role_name.trim()}`)
       setShowForm(false)
       setEditingRole(null)
       setFormData({ role_name: '' })

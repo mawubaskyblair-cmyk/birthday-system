@@ -188,7 +188,7 @@ const formatTime = (date) => {
     setLoading(false)
   }
 
-  async function handleUpdateStatus(userId, currentStatus) {
+  async function handleUpdateStatus(userId, currentStatus, username) {
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
     
     const { error } = await supabase
@@ -205,7 +205,7 @@ const formatTime = (date) => {
     }
   }
 
-  async function handleUpdateRole(userId, newRoleId) {
+  async function handleUpdateRole(userId, newRoleId, username) {
     const { error } = await supabase
       .from('users')
       .update({ role_id: parseInt(newRoleId) })
@@ -357,7 +357,7 @@ const formatTime = (date) => {
                       <td>
                         <select
                           value={user.role_id || ''}
-                          onChange={(e) => handleUpdateRole(user.id, e.target.value)}
+                          onChange={(e) => handleUpdateRole(user.id, e.target.value, user.username)}
                           className="role-select"
                         >
                           <option value="">Select Role</option>
@@ -375,12 +375,12 @@ const formatTime = (date) => {
                       </td>
                       <td>{user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}</td>
                       <td>
-                        <button 
-                          onClick={() => handleUpdateStatus(user.id, user.status)}
-                          className="toggle-status-btn"
-                        >
-                          {user.status === 'active' ? 'Deactivate' : 'Activate'}
-                        </button>
+                      <button 
+                        onClick={() => handleUpdateStatus(user.id, user.status, user.username)}
+                        className="toggle-status-btn"
+                      >
+                      {user.status === 'active' ? 'Deactivate' : 'Activate'}
+                      </button>
                       </td>
                     </tr>
                   ))}
