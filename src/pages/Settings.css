@@ -1,0 +1,581 @@
+/* ========================================
+   PROFESSIONAL SETTINGS PAGE
+   Modern Design | Colorful | Responsive | Time Card
+   Background Image Included
+   ======================================== */
+
+/* ---------- BACKGROUND CONTAINERS ---------- */
+.settings-container-light {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+  padding: 16px;
+  position: relative;
+}
+
+.settings-container-dark {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  padding: 16px;
+  position: relative;
+}
+
+/* Background Image - FIXED to appear */
+.settings-container-light::before,
+.settings-container-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/images/settings-bg.png');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (min-width: 768px) {
+  .settings-container-light,
+  .settings-container-dark {
+    padding: 24px;
+  }
+}
+
+/* ---------- MAIN CARD (GLASS MORPHISM) ---------- */
+.settings-box {
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 28px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .settings-box {
+    padding: 32px;
+  }
+}
+
+.settings-container-light .settings-box {
+  background: rgba(166, 194, 201, 0.94);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(247, 236, 236, 0.5);
+}
+
+.settings-container-dark .settings-box {
+  background: rgba(22, 26, 36, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(14, 13, 13, 0.3);
+}
+
+/* ---------- HEADER SECTION ---------- */
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.settings-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #0e0900 0%, #4f547c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+@media (min-width: 768px) {
+  .settings-header h1 {
+    font-size: 28px;
+  }
+}
+
+.settings-header p {
+  font-size: 14px;
+}
+
+.settings-container-light .settings-header p {
+  color: #050500;
+}
+
+.settings-container-dark .settings-header p {
+  color: #01050a;
+}
+
+/* ========================================
+   TIME CARD (GOLD GRADIENT)
+   ======================================== */
+.time-card-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.time-card {
+  background: linear-gradient(135deg, #54726d 0%, #311c03 100%);
+  padding: 10px 24px;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(240, 152, 1, 0.3);
+}
+
+.time-icon {
+  font-size: 18px;
+}
+
+.time-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-date {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.5px;
+}
+
+.time-clock {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .time-card {
+    padding: 12px 28px;
+  }
+  
+  .time-clock {
+    font-size: 18px;
+  }
+}
+
+/* ========================================
+   STATS CARDS (COLORFUL GRADIENTS)
+   ======================================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+.stat-card {
+  padding: 16px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Card 1 - Company Settings (Gold) */
+.stat-card:nth-child(1) {
+  background: linear-gradient(135deg, #024e3b 0%, #d97706 100%);
+}
+
+/* Card 2 - Email Templates (Green) */
+.stat-card:nth-child(2) {
+  background: linear-gradient(135deg, #020c06 0%, #8d627b41 100%);
+}
+
+/* Card 3 - Placeholders (Purple) */
+.stat-card:nth-child(3) {
+  background: linear-gradient(135deg, #333a159d 0%, #000f05e3 100%);
+}
+
+/* Card 4 - Active (Pink) */
+.stat-card:nth-child(4) {
+  background: linear-gradient(135deg, #f348a6d7 0%, #6489f0d2 100%);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+  font-size: 28px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+}
+
+.stat-info h4 {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+}
+
+.stat-number {
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .stat-card {
+    padding: 18px;
+  }
+  
+  .stat-icon {
+    font-size: 34px;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .stat-number {
+    font-size: 24px;
+  }
+}
+
+/* ---------- DEBUG SECTION (Hidden by default, can show if needed) ---------- */
+.debug-section {
+  display: none;
+}
+
+/* ---------- SETTINGS SECTIONS ---------- */
+.settings-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.settings-container-light .settings-section {
+  background: rgba(248, 248, 242, 0.719);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.settings-container-dark .settings-section {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.settings-section h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #515f1ce0;
+  display: inline-block;
+}
+
+.settings-container-light .settings-section h2 {
+  color: #1e293b;
+}
+
+.settings-container-dark .settings-section h2 {
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .settings-section h2 {
+    font-size: 20px;
+  }
+}
+
+/* Form Groups */
+.settings-form-group {
+  margin-bottom: 24px;
+}
+
+.settings-form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.settings-container-light .settings-form-group label {
+  color: #06090e;
+}
+
+.settings-container-dark .settings-form-group label {
+  color: #040405;
+}
+
+.settings-input,
+.settings-textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1.5px solid #a6a8ac;
+  border-radius: 16px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.settings-input:focus,
+.settings-textarea:focus {
+  outline: none;
+  border-color: #161512;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+.settings-container-dark .settings-input,
+.settings-container-dark .settings-textarea {
+  background: #060708;
+  border-color: #475569;
+  color: rgb(88, 84, 84);
+}
+
+.settings-textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.settings-form-group small {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.settings-container-light .settings-form-group small {
+  color: #0e0e0fdc;
+}
+
+.settings-container-dark .settings-form-group small {
+  color: #060607;
+}
+
+/* Placeholder Tags */
+.placeholder-info {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.placeholder-info strong {
+  font-size: 12px;
+}
+
+.placeholder-tag {
+  background: linear-gradient(135deg, #6e6b5e 0%, #fde68a 100%);
+  color: #240f03;
+  padding: 4px 12px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-family: monospace;
+  font-weight: 600;
+}
+
+.settings-container-dark .placeholder-tag {
+  background: rgba(245, 158, 11, 0.2);
+  color: #ebd282;
+}
+
+/* Preview Boxes */
+.preview-box {
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.settings-container-light .preview-box {
+  background: #f8fafc;
+  border: 1px solid #f1f2f3;
+}
+
+.settings-container-dark .preview-box {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid #334155;
+}
+
+.preview-box p {
+  margin: 0;
+}
+
+.preview-box p:first-child {
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.settings-container-light .preview-box p:first-child {
+  color: #2a3649;
+}
+
+.settings-container-dark .preview-box p:first-child {
+  color: #f7f8fa;
+}
+
+.preview-text {
+  font-size: 14px;
+  line-height: 1.6;
+  font-style: italic;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.settings-container-light .preview-text {
+  color: #334155;
+  background: rgb(236, 234, 234);
+}
+
+.settings-container-dark .preview-text {
+  color: #cbd5e1;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Save Button */
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.save-settings-btn {
+  background: linear-gradient(135deg, #281f38bb 0%, #232924ef 100%);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.save-settings-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+
+.save-settings-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Access Denied Page */
+.access-denied {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.access-denied h2 {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: #ef4444;
+}
+
+/* ========================================
+   RESPONSIVE FIXES
+   ======================================== */
+@media (max-width: 768px) {
+  .settings-box {
+    padding: 16px;
+  }
+  
+  .settings-section {
+    padding: 16px;
+  }
+  
+  .settings-section h2 {
+    font-size: 16px;
+  }
+  
+  .settings-input,
+  .settings-textarea {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+  
+  .placeholder-tag {
+    font-size: 9px;
+    padding: 3px 10px;
+  }
+  
+  .preview-text {
+    font-size: 12px;
+  }
+  
+  .save-settings-btn {
+    padding: 12px 24px;
+    font-size: 14px;
+    width: 100%;
+  }
+  
+  .settings-actions {
+    justify-content: stretch;
+  }
+  
+  .time-card {
+    padding: 8px 18px;
+  }
+  
+  .time-clock {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-card {
+    padding: 10px;
+  }
+  
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+  
+  .stat-number {
+    font-size: 16px;
+  }
+  
+  .stat-info h4 {
+    font-size: 9px;
+  }
+  
+  .settings-header h1 {
+    font-size: 20px;
+  }
+  
+  .settings-header p {
+    font-size: 12px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,570 @@
+/* ========================================
+   ATTRACTIVE DASHBOARD CSS
+   NO BLUE COLOR - ALL 10 CARDS COLORFUL
+   ======================================== */
+
+/* ---------- BACKGROUND ---------- */
+.dashboard-light,
+.dashboard-dark {
+  min-height: 100vh;
+  padding: 20px;
+  background-image: url('/images/dashboard-bg.png');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.dashboard-light {
+  background-color: #f0f2f5;
+}
+
+.dashboard-dark {
+  background-color: #0f0f1a;
+}
+
+/* ---------- CONTENT CONTAINER ---------- */
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+@media (min-width: 768px) {
+  .dashboard-container {
+    padding: 32px;
+  }
+}
+
+/* ---------- HEADER SECTION ---------- */
+.dashboard-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-dark .dashboard-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 768px) {
+  .dashboard-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+  }
+}
+
+.header-title h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.dashboard-light .header-title h1 {
+  color: #1f2937;
+}
+
+.dashboard-dark .header-title h1 {
+  color: white;
+}
+
+.header-title p {
+  font-size: 14px;
+}
+
+.dashboard-light .header-title p {
+  color: #6b7280;
+}
+
+.dashboard-dark .header-title p {
+  color: #9ca3af;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.time-display {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 30px;
+}
+
+.dashboard-light .time-display {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.dashboard-dark .time-display {
+  background: rgba(14, 12, 12, 0.1);
+  color: #fcd34d;
+}
+
+/* ---------- BUTTONS ---------- */
+.mode-btn,
+.logout-btn {
+  padding: 8px 18px;
+  font-size: 13px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.mode-btn {
+  background: #e7b660;
+  color: white;
+}
+
+.mode-btn:hover {
+  background: #d97706;
+  transform: translateY(-2px);
+}
+
+.logout-btn {
+  background: #eb3d26f5;
+  color: white;
+}
+
+.logout-btn:hover {
+  background: #eb3131;
+  transform: translateY(-2px);
+}
+
+/* ========================================
+   STATS GRID - 4 CARDS (COLORFUL, NO BLUE)
+   ======================================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+@media (min-width: 560px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+}
+
+/* CARD 1: TOTAL EMPLOYEES - GOLD/AMBER */
+.stat-card:nth-child(1) {
+  background: linear-gradient(135deg, #ecebde 0%, #d97706 100%);
+}
+
+.stat-card:nth-child(1) .stat-icon {
+  background: rgba(68, 67, 67, 0.25);
+}
+
+.stat-card:nth-child(1) .stat-info h3,
+.stat-card:nth-child(1) .stat-number {
+  color: white;
+}
+
+/* CARD 2: BIRTHDAYS TODAY - ORANGE/RED */
+.stat-card:nth-child(2) {
+  background: linear-gradient(135deg, #424440 0%, #b48b7a 100%);
+}
+
+.stat-card:nth-child(2) .stat-icon {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.stat-card:nth-child(2) .stat-info h3,
+.stat-card:nth-child(2) .stat-number {
+  color: white;
+}
+
+/* CARD 3: EMAILS SENT - GREEN */
+.stat-card:nth-child(3) {
+  background: linear-gradient(135deg, #7e8f84 0%, #16a34a 100%);
+}
+
+.stat-card:nth-child(3) .stat-icon {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.stat-card:nth-child(3) .stat-info h3,
+.stat-card:nth-child(3) .stat-number {
+  color: white;
+}
+
+/* CARD 4: SYSTEM USERS - PURPLE */
+.stat-card:nth-child(4) {
+  background: linear-gradient(135deg, #433a4d 0%, #6909c2 100%);
+}
+
+.stat-card:nth-child(4) .stat-icon {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.stat-card:nth-child(4) .stat-info h3,
+.stat-card:nth-child(4) .stat-number {
+  color: white;
+}
+
+/* Common Stat Card Styles */
+.stat-card {
+  padding: 20px 18px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(248, 247, 247, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shine effect on hover */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(124, 122, 122, 0.25);
+}
+
+.stat-icon {
+  font-size: 38px;
+  width: 65px;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+}
+
+@media (min-width: 768px) {
+  .stat-icon {
+    font-size: 44px;
+    width: 75px;
+    height: 75px;
+  }
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-info h3 {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .stat-info h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+@media (min-width: 768px) {
+  .stat-number {
+    font-size: 34px;
+  }
+}
+
+/* ========================================
+   MENU GRID - 6 CARDS (COLORFUL, NO BLUE)
+   ======================================== */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+@media (min-width: 560px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .menu-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+    margin-bottom: 50px;
+  }
+}
+
+/* MENU CARD 1: EMPLOYEES - TEAL */
+.menu-card:nth-child(1) {
+  background: linear-gradient(135deg, #c9dbce 0%, #0d9488 100%);
+}
+
+/* MENU CARD 2: USERS - INDIGO */
+.menu-card:nth-child(2) {
+  background: linear-gradient(135deg, #020313 0%, #4f46e5 100%);
+}
+
+/* MENU CARD 3: ROLES - ROSE/PINK */
+.menu-card:nth-child(3) {
+  background: linear-gradient(135deg, #f39a9a 0%, #000207e0 100%);
+}
+
+/* MENU CARD 4: SETTINGS - GRAY/SLATE */
+.menu-card:nth-child(4) {
+  background: linear-gradient(135deg, #c1d4fa 0%, #160918 100%);
+}
+
+/* MENU CARD 5: AUDIT LOGS - AMBER */
+.menu-card:nth-child(5) {
+  background: linear-gradient(135deg, #dddddc 0%, #2f3d09 100%);
+}
+
+/* MENU CARD 6: BIRTHDAY ENGINE - EMERALD */
+.menu-card:nth-child(6) {
+  background: linear-gradient(135deg, #e3e6e6 0%, #0f4736 100%);
+}
+
+/* Common Menu Card Styles */
+.menu-card {
+  padding: 24px 16px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Menu Card Shine Effect */
+.menu-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.menu-card:hover::before {
+  opacity: 1;
+}
+
+.menu-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Menu Icon */
+.menu-icon {
+  font-size: 42px;
+  margin-bottom: 14px;
+  display: inline-block;
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+@media (min-width: 768px) {
+  .menu-icon {
+    font-size: 52px;
+    margin-bottom: 18px;
+  }
+}
+
+.menu-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+@media (min-width: 768px) {
+  .menu-card h3 {
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+}
+
+.menu-card p {
+  font-size: 11px;
+  opacity: 0.85;
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .menu-card p {
+    font-size: 12px;
+  }
+}
+
+/* ---------- COMING SOON BANNER ---------- */
+.coming-soon {
+  margin-top: 24px;
+  padding: 28px;
+  border-radius: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .coming-soon {
+    margin-top: 32px;
+    padding: 36px;
+  }
+}
+
+.dashboard-light .coming-soon {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: none;
+}
+
+.dashboard-dark .coming-soon {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.1) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.coming-soon-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+@media (min-width: 768px) {
+  .coming-soon-title {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+}
+
+.dashboard-light .coming-soon-title {
+  color: #92400e;
+}
+
+.dashboard-dark .coming-soon-title {
+  color: #fcd34d;
+}
+
+.coming-soon-text {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+@media (min-width: 768px) {
+  .coming-soon-text {
+    font-size: 14px;
+  }
+}
+
+.dashboard-light .coming-soon-text {
+  color: #78350f;
+}
+
+.dashboard-dark .coming-soon-text {
+  color: #cbd5e1;
+}
+
+/* ---------- FLEXIBLE CONTAINER ---------- */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 40px);
+}
+
+.coming-soon {
+  margin-top: auto;
+}
+
+/* ---------- SMALL MOBILE ---------- */
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+  
+  .stat-card {
+    padding: 14px 12px;
+  }
+  
+  .stat-icon {
+    font-size: 28px;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .stat-number {
+    font-size: 22px;
+  }
+  
+  .stat-info h3 {
+    font-size: 10px;
+  }
+  
+  .menu-card {
+    padding: 16px 8px;
+  }
+  
+  .menu-icon {
+    font-size: 28px;
+  }
+  
+  .menu-card h3 {
+    font-size: 12px;
+  }
+  
+  .menu-card p {
+    font-size: 8px;
+  }
+  
+  .mode-btn,
+  .logout-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  
+  .time-display {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+}
+
+/* ---------- DARK MODE OVERRIDES ---------- */
+.dashboard-dark .stat-card,
+.dashboard-dark .menu-card {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-dark .stat-card:hover,
+.dashboard-dark .menu-card:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}

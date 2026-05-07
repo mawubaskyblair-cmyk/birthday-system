@@ -1,0 +1,633 @@
+/* ========================================
+   PROFESSIONAL AUDIT LOGS PAGE
+   Modern Design | Colorful | Responsive | Time Card
+   ======================================== */
+
+/* ---------- BACKGROUND CONTAINERS ---------- */
+.audit-container-light {
+  min-height: 100vh;
+  background: linear-gradient(135deg, lab(97.8% -0.48 -0.72) 0%, #f8f8f8 100%);
+  padding: 16px;
+  position: relative;
+}
+
+.audit-container-dark {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ebecee 0%, #f6f7f8 50%, #0f172a 100%);
+  padding: 16px;
+  position: relative;
+}
+
+/* Background Image */
+.audit-container-light::before,
+.audit-container-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/images/audit-bg.png');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (min-width: 768px) {
+  .audit-container-light,
+  .audit-container-dark {
+    padding: 24px;
+  }
+}
+
+/* ---------- MAIN CARD (GLASS MORPHISM) ---------- */
+.audit-box {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  border-radius: 28px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .audit-box {
+    padding: 32px;
+  }
+}
+
+.audit-container-light .audit-box {
+  background: rgba(219, 214, 186, 0.94);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 20px 40px rgba(114, 113, 113, 0.06);
+  border: 1px solid rgba(180, 155, 155, 0.5);
+}
+
+.audit-container-dark .audit-box {
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- HEADER SECTION ---------- */
+.audit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(10, 10, 10, 0.897);
+}
+
+.audit-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #485280 0%, #f52179 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+@media (min-width: 768px) {
+  .audit-header h1 {
+    font-size: 28px;
+  }
+}
+
+.audit-header p {
+  font-size: 14px;
+}
+
+.audit-container-light .audit-header p {
+  color: #0c0c0c;
+}
+
+.audit-container-dark .audit-header p {
+  color: #252525;
+}
+
+/* ========================================
+   TIME CARD (GOLD GRADIENT)
+   ======================================== */
+.time-card-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.time-card {
+  background: linear-gradient(135deg, #6b6b69 0%, #417715 100%);
+  padding: 10px 24px;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(253, 161, 2, 0.3);
+}
+
+.time-icon {
+  font-size: 18px;
+}
+
+.time-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-date {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.5px;
+}
+
+.time-clock {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .time-card {
+    padding: 12px 28px;
+  }
+  
+  .time-clock {
+    font-size: 18px;
+  }
+}
+
+/* ========================================
+   STATS CARDS (COLORFUL)
+   ======================================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+.stat-card {
+  padding: 16px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Card 1 - Total Logs (Purple) */
+.stat-card:nth-child(1) {
+  background: linear-gradient(135deg, #47464b 0%, #2b3746 100%);
+}
+
+/* Card 2 - Unique Users (Blue) */
+.stat-card:nth-child(2) {
+  background: linear-gradient(135deg, #4aeb19 0%, #eb25a9 100%);
+}
+
+/* Card 3 - Today's Logs (Green) */
+.stat-card:nth-child(3) {
+  background: linear-gradient(135deg, #a6b9a9 0%, #5c2b0f 100%);
+}
+
+/* Card 4 - This Week (Orange) */
+.stat-card:nth-child(4) {
+  background: linear-gradient(135deg, #382f20 0%, #d90606 100%);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+  font-size: 28px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+}
+
+.stat-info h4 {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .stat-card {
+    padding: 18px;
+  }
+  
+  .stat-icon {
+    font-size: 34px;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .stat-number {
+    font-size: 28px;
+  }
+}
+
+/* ---------- FILTERS SECTION ---------- */
+.audit-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .audit-filters {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+}
+
+.audit-search {
+  flex: 2;
+  padding: 12px 18px;
+  border-radius: 16px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.audit-search:focus {
+  outline: none;
+  border-color: #0a0a0a;
+  box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.15);
+}
+
+.audit-filter,
+.audit-date,
+.audit-page-size {
+  padding: 12px 18px;
+  border-radius: 16px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+  cursor: pointer;
+}
+
+.audit-filter:focus,
+.audit-date:focus,
+.audit-page-size:focus {
+  outline: none;
+  border-color: #2e2d2e;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+.audit-container-dark .audit-search,
+.audit-container-dark .audit-filter,
+.audit-container-dark .audit-date,
+.audit-container-dark .audit-page-size {
+  background: #535353;
+  border-color: #0d0d0e;
+  color: white;
+}
+
+/* ---------- TABLE SECTION ---------- */
+.audit-table-responsive {
+  overflow-x: auto;
+  margin: 20px 0;
+  border-radius: 20px;
+}
+
+.audit-table {
+  width: 100%;
+  min-width: 800px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+/* Table Header */
+.audit-table thead tr {
+  background: linear-gradient(135deg, #83af8d 0%, #080808 100%);
+}
+
+.audit-table th {
+  padding: 16px 14px;
+  text-align: left;
+  font-weight: 700;
+  color: white;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.audit-table th:first-child {
+  border-top-left-radius: 16px;
+}
+
+.audit-table th:last-child {
+  border-top-right-radius: 16px;
+}
+
+/* Table Rows */
+.audit-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.audit-container-light .audit-table tbody tr {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.audit-container-dark .audit-table tbody tr {
+  background: rgba(30, 41, 59, 0.6);
+  border-bottom: 1px solid #334155;
+}
+
+.audit-table tbody tr:hover {
+  background: rgba(139, 92, 246, 0.08);
+  transform: scale(1.01);
+}
+
+.audit-table td {
+  padding: 14px;
+}
+
+.audit-container-light .audit-table td {
+  color: #1e293b;
+}
+
+.audit-container-dark .audit-table td {
+  color: #e2e8f0;
+}
+
+/* ========================================
+   ACTION BADGES (Different Colors)
+   ======================================== */
+.action-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Login/Logout Actions */
+.action-login {
+  background: linear-gradient(135deg, #517c61 0%, #2cee73 100%);
+  color: white;
+}
+
+.action-logout {
+  background: linear-gradient(135deg, #815f74 0%, #194622 100%);
+  color: white;
+}
+
+/* Employee Actions */
+.action-create_employee {
+  background: linear-gradient(135deg, #39393a 0%, #25ebdb 100%);
+  color: white;
+}
+
+.action-edit_employee {
+  background: linear-gradient(135deg, #2c2c2b 0%, #6fe984 100%);
+  color: white;
+}
+
+.action-delete_employee {
+  background: linear-gradient(135deg, #1b1a1a 0%, #dc2626 100%);
+  color: white;
+}
+
+/* User Actions */
+.action-create_user {
+  background: linear-gradient(135deg, #908c99 0%, #7c3aed 100%);
+  color: white;
+}
+
+.action-update_user_status {
+  background: linear-gradient(135deg, #9de2f7 0%, #db2777 100%);
+  color: white;
+}
+
+.action-update_user_role {
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  color: white;
+}
+
+/* Role Actions */
+.action-create_role {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+.action-edit_role {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: white;
+}
+
+.action-delete_role {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.action-update_permissions {
+  background: linear-gradient(135deg, #9ea2a3 0%, #0891b2 100%);
+  color: white;
+}
+
+/* Settings Action */
+.action-update_settings {
+  background: linear-gradient(135deg, #6366f1 0%, #0a1213 100%);
+  color: white;
+}
+
+/* Birthday Engine Action */
+.action-send_birthday_emails {
+  background: linear-gradient(135deg, #0f0a01 0%, #d97706 100%);
+  color: white;
+}
+
+/* Default Action */
+.action-default {
+  background: linear-gradient(135deg, #6b7280 0%, #00040a 100%);
+  color: white;
+}
+
+/* ---------- PAGINATION ---------- */
+.audit-pagination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 640px) {
+  .audit-pagination {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.audit-pagination-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.page-btn {
+  background: linear-gradient(135deg, #030008 0%, #c9adfa 100%);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   RESPONSIVE FIXES
+   ======================================== */
+@media (max-width: 768px) {
+  .audit-box {
+    padding: 16px;
+  }
+  
+  .audit-header h1 {
+    font-size: 22px;
+  }
+  
+  .audit-table th,
+  .audit-table td {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+  
+  .action-badge {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+  
+  .audit-search,
+  .audit-filter,
+  .audit-date,
+  .audit-page-size {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+  
+  .page-btn {
+    padding: 6px 16px;
+    font-size: 12px;
+  }
+  
+  .time-card {
+    padding: 8px 18px;
+  }
+  
+  .time-clock {
+    font-size: 14px;
+  }
+  
+  .stats-grid {
+    gap: 12px;
+  }
+  
+  .stat-card {
+    padding: 12px;
+  }
+  
+  .stat-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 24px;
+  }
+  
+  .stat-number {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-card {
+    padding: 10px;
+  }
+  
+  .stat-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+  
+  .stat-number {
+    font-size: 16px;
+  }
+  
+  .stat-info h4 {
+    font-size: 9px;
+  }
+  
+  .audit-pagination {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .audit-pagination-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    transform: none !important;
+  }
+}

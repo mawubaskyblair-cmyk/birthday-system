@@ -1,0 +1,567 @@
+/* ============================================
+   PROFESSIONAL LOGIN PAGE DESIGN
+   Color Scheme: Gold/Amber + Dark Slate + Warm Gray
+   NO BLUE COLOR
+   ============================================ */
+
+/* Reset and Base */
+/* ============================================
+   PROFESSIONAL LOGIN PAGE WITH BACKGROUND IMAGE
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.login-wrapper {
+  min-height: 100vh;
+  /* Background Image */
+  background-image: url('/images/bg-app.jpg.png');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  /* Fallback color */
+  background-color: #1a1a2e;
+  /* Blend for readability */
+  background-blend-mode: overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+  position: relative;
+}
+
+/* Dark overlay for better text contrast */
+.login-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(238, 190, 216, 0.342);
+  z-index: 0;
+}
+
+.login-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  max-width: 1300px;
+  width: 100%;
+  background: #f8ebebec;
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(22, 22, 22, 0.007);
+  transition: all 0.3s ease;
+}
+
+/* The rest of your existing CSS remains the same */
+/* ... */
+
+/* ============================================
+   LEFT SIDE - BRANDING SECTION (DARK THEME)
+   ============================================ */
+.login-branding {
+  flex: 1;
+  background: linear-gradient(135deg, #ababac 0%, #33032f 50%, #1a1a2e 100%);
+  padding: 48px 40px;
+  color: rgb(223, 212, 212);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-content {
+  max-width: 400px;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.logo-circle {
+  width: 48px;
+  height: 48px;
+  background: rgba(2, 2, 2, 0.904);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(8, 8, 8, 0.3);
+}
+
+.logo-emoji {
+  font-size: 28px;
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: white;
+}
+
+.brand-title {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+.brand-highlight {
+  color: #03c2fc;
+  position: relative;
+  display: inline-block;
+}
+
+.brand-description {
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: 0.8;
+  margin-bottom: 32px;
+  color: #fdfdfd;
+}
+
+.brand-features {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 48px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #fafafa;
+}
+
+.feature-check {
+  width: 22px;
+  height: 22px;
+  background: rgba(13, 14, 14, 0.904);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #1ffd02;
+  font-weight: bold;
+}
+
+.brand-testimonial {
+  background: rgba(12, 15, 12, 0.05);
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(77, 73, 68, 0.15);
+}
+
+.testimonial-quote {
+  font-size: 48px;
+  font-family: 'Georgia', serif;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  opacity: 0.2;
+  color: hwb(71 3% 2% / 0.952);
+}
+
+.testimonial-text {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+  font-style: italic;
+  color: #f6f6f7;
+}
+
+.testimonial-author {
+  font-size: 12px;
+  opacity: 0.7;
+  color: #a0f306;
+}
+
+/* ============================================
+   RIGHT SIDE - LOGIN FORM SECTION (LIGHT THEME)
+   ============================================ */
+.login-form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+  background: #f8f7f7;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.form-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e1e2f;
+  margin-bottom: 8px;
+}
+
+.form-header p {
+  font-size: 14px;
+  color: #f6f6fa;
+}
+
+/* Alert Styles */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+
+.alert-error {
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #dc2626;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  color: #16a34a;
+}
+
+.alert-icon {
+  font-size: 16px;
+}
+
+/* Input Styles */
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #f2f2f5;
+  margin-bottom: 8px;
+}
+
+.input-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 18px;
+  color: #fafafd;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 40px 12px 44px;
+  border: 1.5px solid #e2e2ec;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background: #fafafc;
+  color: #1e1e2f;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #f1ece3;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.form-input::placeholder {
+  color: #e6e6ff;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  color: #dcdce6;
+}
+
+.input-hint {
+  display: block;
+  font-size: 11px;
+  color: #ededf5;
+  margin-top: 6px;
+}
+
+/* Form Options */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #e7e7f0;
+}
+
+.checkbox-label input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #02f760;
+}
+
+.forgot-link {
+  background: none;
+  border: none;
+  color: #ffa303;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.forgot-link:hover {
+  color: #fa8703;
+  text-decoration: underline;
+}
+
+/* Login Button - Gold/Amber Theme */
+.login-button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #dfb060 0%, #6a8f73 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(247, 245, 250, 0.945);
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Form Footer */
+.form-footer {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.security-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.security-badges span {
+  font-size: 11px;
+  color: #def706;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer-text {
+  font-size: 11px;
+  color: #e2ece9;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet View */
+@media (max-width: 1024px) {
+  .brand-title {
+    font-size: 28px;
+  }
+  
+  .brand-content {
+    max-width: 320px;
+  }
+}
+
+/* Mobile View */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+    max-width: 500px;
+  }
+  
+  .login-branding {
+    padding: 32px 24px;
+  }
+  
+  .brand-title {
+    font-size: 24px;
+  }
+  
+  .brand-description {
+    font-size: 13px;
+  }
+  
+  .brand-features {
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  
+  .feature-item {
+    font-size: 12px;
+  }
+  
+  .brand-testimonial {
+    padding: 20px;
+  }
+  
+  .testimonial-text {
+    font-size: 12px;
+  }
+  
+  .login-form-section {
+    padding: 32px 24px;
+  }
+  
+  .form-header h2 {
+    font-size: 24px;
+  }
+}
+
+/* Small Mobile View */
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding: 12px;
+  }
+  
+  .login-form-section {
+    padding: 24px 20px;
+  }
+  
+  .brand-logo {
+    margin-bottom: 32px;
+  }
+  
+  .logo-text {
+    font-size: 18px;
+  }
+  
+  .form-options {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .security-badges {
+    gap: 10px;
+  }
+  
+  .security-badges span {
+    font-size: 10px;
+  }
+}
+
+/* Dark Mode Support for Form Section */
+@media (prefers-color-scheme: dark) {
+  .login-form-section {
+    background: linear-gradient(135deg, #4b4949 0%, #031718 100%);
+  }
+  
+  .form-header h2 {
+    color: #f1f1f5;
+  }
+  
+  .form-header p {
+    color: #f3f3f7;
+  }
+  
+  .input-group label {
+    color: #e4e4ee;
+  }
+  
+  .form-input {
+    background: #1a1a2e;
+    border-color: #2d2d44;
+    color: #f1f1f5;
+  }
+  
+  .form-input:focus {
+    background: #1a1a2e;
+  }
+  
+  .checkbox-label {
+    color: #ffffff;
+  }
+  
+  .alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+  }
+  
+  .alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+  }
+}
