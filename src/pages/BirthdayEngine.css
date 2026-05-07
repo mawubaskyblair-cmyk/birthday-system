@@ -230,7 +230,7 @@
 
 /* Card 1 - Today's Birthdays (Gold) */
 .stat-card:nth-child(1) {
-  background: linear-gradient(135deg, #131212 0%, #f0be7e 100%);
+  background: linear-gradient(135deg, #cac9c9 0%, #c8ecec 100%);
 }
 
 /* Card 2 - Emails Sent (Green) */
@@ -416,7 +416,7 @@
 }
 
 .birthday-container-dark .birthday-info p {
-  color: #29959c;
+  color: #c3c5c5;
 }
 
 .no-birthdays {
@@ -427,7 +427,7 @@
 }
 
 .birthday-container-light .no-birthdays {
-  background: #d3d2d1b0;
+  background: linear-gradient(135deg, #f57c048f 0%, #01fc0e 100%);
   color: #070707;
 }
 
@@ -438,7 +438,7 @@
 
 /* Send Button */
 .send-birthday-btn {
-  background: linear-gradient(135deg, #f57c048f 0%, #01fc0e 100%);
+  background: linear-gradient(135deg, #f10524f8 0%, #031103 100%);
   color: rgb(246, 248, 229);
   border: none;
   padding: 14px 32px;

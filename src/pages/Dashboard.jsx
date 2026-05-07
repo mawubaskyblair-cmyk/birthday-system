@@ -168,10 +168,17 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Time */}
-        <div style={{ textAlign: 'right', marginBottom: 20 }}>
-          <span style={{ fontSize: 14, opacity: 0.7 }}> {formatTime(currentTime)}</span>
-        </div>
+        
+{/* Time Card */}
+<div className="time-card-container">
+  <div className="time-card">
+    <div className="time-icon"></div>
+    <div className="time-text">
+      <div className="time-date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+      <div className="time-clock">{new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
+    </div>
+  </div>
+</div>
 
                  {/* Stats - Role Based Visibility */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 15, marginBottom: 30 }}>
