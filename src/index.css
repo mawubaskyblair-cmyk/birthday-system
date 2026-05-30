@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #e2e8f0;
+  --bg-secondary: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border: #cbd5e1;
+}
+
+.dark {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border: #334155;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Make sidebar and header use variables */
+.bg-white {
+  background-color: var(--bg-secondary) !important;
+}
+
+.border-b, .border-t, .border-l, .border-r {
+  border-color: var(--border) !important;
+}
+
+.text-slate-700, .text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+.text-slate-500, .text-gray-500 {
+  color: var(--text-secondary) !important;
+}
