@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 import { addAuditLog } from '../lib/auditLog'
 import Layout from '../components/layout/Layout'
 import { ArrowLeft, Edit2, Save, X, Camera, Mail, Phone, Briefcase, User, Lock, Shield } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function Profile() {
+  const { user: authUser } = useAuth()
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -22,19 +24,18 @@ export default function Profile() {
 
   useEffect(() => {
     loadProfile()
-  }, [])
+  }, [authUser])
 
   async function loadProfile() {
     setLoading(true)
-    
-    const { data: { user } } = await supabase.auth.getUser()
-    setUser(user)
-    
-    if (user) {
+
+    setUser(authUser)
+
+    if (authUser) {
       const { data } = await supabase
         .from('users')
         .select('username, phone, role_id')
-        .eq('id', user.id)
+        .eq('id', authUser.id)
         .single()
       
       let roleName = 'Employee'
@@ -48,8 +49,8 @@ export default function Profile() {
       }
       
       setFormData({
-        username: data?.username || user.email.split('@')[0],
-        email: user.email || '',
+        username: data?.username || authUser.email?.split('@')[0] || '',
+        email: authUser.email || '',
         phone: data?.phone || '',
         role: roleName
       })

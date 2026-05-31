@@ -16,10 +16,12 @@ import {
   Briefcase
 } from 'lucide-react'
 
-import { supabase } from '../../lib/supabase'
-import { getCurrentUserPermissions } from '../../lib/permissions'
+import { addAuditLog } from '../../lib/auditLog'
+import { useAuth } from '../../contexts/AuthContext'
+import { clearPermissionsCache, getCurrentUserPermissions } from '../../lib/permissions'
 
 export default function Sidebar({ onCollapseChange, isMobile = false, mobileOpen = false, onMobileClose }) {
+  const { signOut } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -41,27 +43,17 @@ export default function Sidebar({ onCollapseChange, isMobile = false, mobileOpen
     }
   }
 
-  // UPDATED: Logout function - NO manual created_at (let database handle it)
+  // Logout function with audit logging (NO user_agent)
   const handleLogout = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (user) {
-        await supabase.from('audit_logs').insert([{
-          user_id: user.id,
-          user_email: user.email,
-          action: 'LOGOUT',
-          description: 'User logged out successfully',
-          user_agent: navigator.userAgent
-          // created_at is omitted - Supabase will use DEFAULT now()
-        }])
-      }
-      
-      await supabase.auth.signOut()
+      await addAuditLog('LOGOUT', 'User logged out successfully')
+      clearPermissionsCache()
+      await signOut()
       navigate('/login')
     } catch (error) {
       console.error('Logout error:', error)
-      await supabase.auth.signOut()
+      clearPermissionsCache()
+      await signOut()
       navigate('/login')
     }
   }
@@ -125,7 +117,7 @@ export default function Sidebar({ onCollapseChange, isMobile = false, mobileOpen
           path: '/birthday-engine',
           label: 'Birthday Engine',
           icon: Calendar,
-          permission: 'View Employee'
+          permission: null  // Everyone can see this
         }
       ]
     },
@@ -154,6 +146,7 @@ export default function Sidebar({ onCollapseChange, isMobile = false, mobileOpen
       ...section,
       items: section.items.filter(item => {
         if (item.path === '/dashboard') return true
+        if (item.path === '/birthday-engine') return true  // Always show Birthday Engine
         if (!item.permission) return true
         return userPermissions.includes(item.permission)
       })
@@ -270,7 +263,7 @@ export default function Sidebar({ onCollapseChange, isMobile = false, mobileOpen
         ))}
       </nav>
 
-      {/* Logout Section */}
+      {/* Logout Button */}
       <div
         className="p-3 border-t"
         style={{ borderTopColor: 'var(--border)' }}

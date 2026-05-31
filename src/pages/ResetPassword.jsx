@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { safeGetSession } from '../lib/auth'
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('')
@@ -13,7 +14,7 @@ export default function ResetPassword() {
   useEffect(() => {
     // Check if we have a valid reset session
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+      const session = await safeGetSession()
       if (!session) {
         navigate('/forgot-password')
       }

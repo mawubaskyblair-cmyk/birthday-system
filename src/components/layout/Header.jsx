@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Moon, Sun, Bell, Menu, X, User, LogOut, Settings as SettingsIcon } from 'lucide-react'
+import { Moon, Sun, Bell, Menu, X, User } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../contexts/AuthContext'
 import useTheme from '../../hooks/useTheme'
 import Notifications from '../Notifications'
 
 export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
+  const { user } = useAuth()
   const navigate = useNavigate()
   const { dark, toggleTheme, toggleWithAnimation, systemPreference } = useTheme()
   const [time, setTime] = useState(new Date())
@@ -39,10 +41,9 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
       clearInterval(timeInterval)
       clearInterval(notifInterval)
     }
-  }, [notifOpen])
+  }, [notifOpen, user])
 
   async function loadUser() {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const { data: userData } = await supabase
@@ -61,7 +62,6 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
   }
 
   async function loadUnreadCount() {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     
     const { count, error } = await supabase
@@ -72,31 +72,6 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
     
     if (!error) {
       setUnreadCount(count || 0)
-    }
-  }
-
-  // UPDATED: Logout function - NO manual created_at (let database handle it)
-  async function logout() {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (user) {
-        await supabase.from('audit_logs').insert([{
-          user_id: user.id,
-          user_email: user.email,
-          action: 'LOGOUT',
-          description: 'User logged out successfully',
-          user_agent: navigator.userAgent
-          // created_at is omitted - Supabase will use DEFAULT now()
-        }])
-      }
-      
-      await supabase.auth.signOut()
-      window.location.href = '/login'
-    } catch (error) {
-      console.error('Logout error:', error)
-      await supabase.auth.signOut()
-      window.location.href = '/login'
     }
   }
 
@@ -212,7 +187,7 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
           {role}
         </span>
 
-        {/* USER MENU */}
+        {/* USER MENU - Only Profile, NO Settings, NO Logout */}
         <div className="relative">
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -230,7 +205,7 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
             </span>
           </button>
 
-          {/* User Dropdown Menu */}
+          {/* User Dropdown Menu - Only Profile, NO Settings, NO Logout */}
           {userMenuOpen && (
             <div 
               className="absolute right-0 mt-2 w-48 rounded-xl border shadow-xl z-50 overflow-hidden fade-in"
@@ -250,7 +225,8 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
               >
                 <User size={16} /> Profile
               </button>
-              
+              {/* NO Settings button */}
+              {/* NO Logout button */}
             </div>
           )}
         </div>

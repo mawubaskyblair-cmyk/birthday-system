@@ -1,8 +1,19 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Link } from 'react-router-dom'
+import { addAuditLog } from '../lib/auditLog'
+import {
+  clearLoginAttempts,
+  getLoginLockStatus,
+  getSafeAuthErrorMessage,
+  isValidEmail,
+  recordFailedLogin,
+  sanitizeEmail,
+} from '../lib/security'
+import LoginLogo from '../components/LoginLogo'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function Login() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -10,29 +21,12 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [showCaptcha, setShowCaptcha] = useState(false)
-  
+
   const [num1, setNum1] = useState(0)
   const [num2, setNum2] = useState(0)
   const [captchaAnswer, setCaptchaAnswer] = useState('')
   const [captchaError, setCaptchaError] = useState('')
   const [captchaVerified, setCaptchaVerified] = useState(false)
-
-  // Write to audit log - NO manual created_at (let database handle it)
-  async function writeToAuditLog(userId, userEmail, action, description) {
-    try {
-      const { error } = await supabase.from('audit_logs').insert([{
-        user_id: userId || null,
-        user_email: userEmail || email,
-        action: action,
-        description: description,
-        user_agent: navigator.userAgent
-        // created_at is omitted - Supabase will use DEFAULT now()
-      }])
-      if (error) console.error('Audit log error:', error)
-    } catch (err) {
-      console.error('Failed to write audit log:', err)
-    }
-  }
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail')
@@ -47,11 +41,7 @@ export default function Login() {
   }, [])
 
   useEffect(() => {
-    if (password.length > 0) {
-      setShowCaptcha(true)
-    } else {
-      setShowCaptcha(false)
-    }
+    setShowCaptcha(password.length > 0)
   }, [password])
 
   const generateNewCaptcha = () => {
@@ -66,14 +56,14 @@ export default function Login() {
 
   const verifyCaptcha = () => {
     const expectedAnswer = num1 + num2
-    const userAnswer = parseInt(captchaAnswer)
-    
+    const userAnswer = parseInt(captchaAnswer, 10)
+
     if (isNaN(userAnswer)) {
       setCaptchaError('Enter correct answer')
       setCaptchaVerified(false)
       return
     }
-    
+
     if (userAnswer === expectedAnswer) {
       setCaptchaVerified(true)
       setCaptchaError('')
@@ -87,70 +77,86 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault()
 
+    const lock = getLoginLockStatus()
+    if (lock.locked) {
+      setError(lock.message)
+      return
+    }
+
     if (!captchaVerified) {
       setError('Solve math problem first')
+      return
+    }
+
+    const cleanEmail = sanitizeEmail(email)
+    if (!isValidEmail(cleanEmail)) {
+      setError('Enter a valid email address.')
       return
     }
 
     setLoading(true)
     setError('')
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password,
+      })
 
-    if (error) {
-      await writeToAuditLog(null, email, 'LOGIN_FAILED', `Failed login attempt: ${error.message}`)
-      setError(error.message)
+      if (signInError) {
+        recordFailedLogin()
+        setError(getSafeAuthErrorMessage(signInError))
+        generateNewCaptcha()
+        setCaptchaVerified(false)
+      } else {
+        clearLoginAttempts()
+        await addAuditLog('LOGIN_SUCCESS', `User ${cleanEmail} logged in successfully`)
+
+        if (rememberMe) {
+          localStorage.setItem('rememberedEmail', cleanEmail)
+        } else {
+          localStorage.removeItem('rememberedEmail')
+        }
+        navigate('/dashboard')
+      }
+    } catch (err) {
+      recordFailedLogin()
+      setError(getSafeAuthErrorMessage(err))
       generateNewCaptcha()
       setCaptchaVerified(false)
-    } else if (data?.user) {
-      await writeToAuditLog(data.user.id, data.user.email, 'LOGIN_SUCCESS', 'User logged in successfully')
-      
-      if (rememberMe) {
-        localStorage.setItem('rememberedEmail', email)
-      } else {
-        localStorage.removeItem('rememberedEmail')
-      }
-      window.location.href = '/dashboard'
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden 
-    bg-gradient-to-br from-stone-900 via-zinc-800 to-stone-700 
-    flex items-center justify-center p-4">
-    
-      <div className="absolute inset-0 
-      bg-[radial-gradient(ellipse_at_50%_50%,_rgba(251,191,36,0.12)_0%,_rgba(0,0,0,0)_70%)]"></div>
+    <div
+      className="login-page relative min-h-screen overflow-hidden bg-gradient-to-br from-stone-900 via-zinc-800 to-stone-700 flex items-center justify-center p-4"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,_rgba(251,191,36,0.12)_0%,_rgba(0,0,0,0)_70%)]" />
       <div className="relative z-10 w-full max-w-sm">
-      <div className="overflow-hidden rounded-2xl bg-white shadow-xl border border-white/5">
-          
-          <div className="h-1 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
+        <div className="login-card overflow-hidden rounded-2xl bg-white shadow-xl border border-slate-200">
+          <div className="h-1 bg-gradient-to-r from-emerald-400 to-emerald-600" />
 
           <div className="pt-6 pb-3 text-center">
             <div className="mb-3 flex justify-center">
               <div className="bg-slate-100 rounded-xl p-2">
-                <img
-                  src="/birthday-photo.jpg"
-                  alt="Logo"
-                  className="h-14 w-14 rounded-lg object-cover"
-                  style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
-                />
+                <LoginLogo />
               </div>
             </div>
             <h1 className="text-2xl font-extrabold tracking-tight text-slate-800">
               BirthdayTracker
             </h1>
-            <p className="text-xs font-medium text-emerald-600 mt-1">Celebrate your team the smart way</p>
+            <p className="login-tagline text-xs font-medium text-emerald-600 mt-1">
+              Celebrate your team the smart way
+            </p>
           </div>
 
           <form onSubmit={handleLogin} className="px-6 pb-6">
-
             <div className="mb-4">
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">EMAIL ADDRESS</label>
+              <label className="login-label block text-xs font-bold text-slate-700 mb-1.5">
+                EMAIL ADDRESS
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg className="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,13 +169,16 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 transition"
                   placeholder="name@company.com"
+                  autoComplete="email"
                   required
                 />
               </div>
             </div>
 
             <div className="mb-4">
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">PASSWORD</label>
+              <label className="login-label block text-xs font-bold text-slate-700 mb-1.5">
+                PASSWORD
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg className="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,12 +191,14 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-10 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 transition"
                   placeholder="Enter your password"
+                  autoComplete="current-password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-emerald-600 transition"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,22 +223,27 @@ export default function Login() {
                   className="h-4 w-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-400 focus:ring-offset-0"
                   style={{ accentColor: '#10b981' }}
                 />
-                <span className="text-xs font-semibold text-slate-700">Remember me</span>
+                <span className="login-remember text-xs font-semibold text-slate-700">Remember me</span>
               </label>
-              <Link to="/forgot-password" className="text-xs font-semibold text-amber-400 hover:text-amber-500 transition">
+              <Link
+                to="/forgot-password"
+                className="login-forgot text-xs font-semibold text-amber-600 hover:text-amber-700 transition"
+              >
                 Forgot password?
               </Link>
             </div>
 
             {showCaptcha && (
-              <div className="mb-4 rounded-lg bg-emerald-50 border border-emerald-200 p-3">
+              <div className="login-captcha-box mb-4 rounded-lg bg-emerald-50 border border-emerald-200 p-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-slate-700">{num1} + {num2} = </span>
+                  <span className="text-sm font-bold text-slate-700">
+                    {num1} + {num2} ={' '}
+                  </span>
                   <input
                     type="number"
                     value={captchaAnswer}
                     onChange={(e) => setCaptchaAnswer(e.target.value)}
-                    className="w-20 rounded-md border border-slate-200 px-2 py-1.5 text-sm text-center font-medium focus:border-emerald-400 focus:outline-none"
+                    className="w-20 rounded-md border border-slate-200 px-2 py-1.5 text-sm text-center font-medium text-slate-800 focus:border-emerald-400 focus:outline-none"
                     placeholder=""
                   />
                   <button
@@ -238,13 +254,13 @@ export default function Login() {
                     Verify
                   </button>
                 </div>
-                {captchaError && <p className="text-xs font-medium text-red-500 mt-2">{captchaError}</p>}
-                {captchaVerified && <p className="text-xs font-bold text-emerald-600 mt-2">✓ Verified</p>}
+                {captchaError && <p className="text-xs font-medium text-red-600 mt-2">{captchaError}</p>}
+                {captchaVerified && <p className="text-xs font-bold text-emerald-700 mt-2">✓ Verified</p>}
               </div>
             )}
 
             {error && (
-              <div className="mb-3 rounded-lg bg-red-50 border border-red-200 p-2 text-center text-xs font-medium text-red-600">
+              <div className="login-error mb-3 rounded-lg bg-red-50 border border-red-200 p-2 text-center text-xs font-medium text-red-700">
                 {error}
               </div>
             )}
@@ -258,8 +274,8 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="border-t border-slate-100 bg-slate-50 px-6 py-2.5 text-center">
-            <p className="text-[11px] font-medium text-slate-400">🔒 A Secure platform</p>
+          <div className="login-footer border-t border-slate-100 bg-slate-50 px-6 py-2.5 text-center">
+            <p className="text-[11px] font-medium text-slate-500">🔒 A Secure platform</p>
           </div>
         </div>
       </div>

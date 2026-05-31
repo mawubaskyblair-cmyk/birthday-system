@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { supabase } from './lib/supabase'
+import { useAuth } from './contexts/AuthContext'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Employees from './pages/Employees'
@@ -16,33 +15,15 @@ import ResetPassword from './pages/ResetPassword'
 import { Toaster } from 'react-hot-toast'
 
 function App() {
-  const [session, setSession] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const {
-      data: { subscription }
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
+  const { session, loading } = useAuth()
 
   if (loading) {
     return (
-      <div 
+      <div
         className="min-h-screen flex items-center justify-center"
         style={{ backgroundColor: 'var(--bg-primary)' }}
       >
-        <div 
+        <div
           className="text-amber-500 text-lg animate-pulse"
           style={{ color: 'var(--accent)' }}
         >
@@ -54,15 +35,14 @@ function App() {
 
   return (
     <BrowserRouter>
-      {/* Toast system (GLOBAL) */}
-      <Toaster 
-        position="top-right" 
+      <Toaster
+        position="top-right"
         reverseOrder={false}
         toastOptions={{
           style: {
             background: 'var(--bg-secondary)',
             color: 'var(--text-primary)',
-            border: '1px solid var(--border)'
+            border: '1px solid var(--border)',
           },
           success: {
             iconTheme: {
@@ -80,7 +60,6 @@ function App() {
       />
 
       <Routes>
-        {/* AUTH ROUTES */}
         <Route
           path="/login"
           element={!session ? <Login /> : <Navigate to="/dashboard" />}
@@ -101,7 +80,6 @@ function App() {
           element={!session ? <ResetPassword /> : <Navigate to="/dashboard" />}
         />
 
-        {/* PROTECTED ROUTES */}
         <Route
           path="/dashboard"
           element={session ? <Dashboard /> : <Navigate to="/login" />}
@@ -142,10 +120,9 @@ function App() {
           element={session ? <Settings /> : <Navigate to="/login" />}
         />
 
-        {/* DEFAULT ROUTE */}
         <Route
           path="/"
-          element={<Navigate to={session ? "/dashboard" : "/login"} />}
+          element={<Navigate to={session ? '/dashboard' : '/login'} />}
         />
       </Routes>
     </BrowserRouter>

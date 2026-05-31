@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 import Layout from '../components/layout/Layout'
 import { ChevronLeft, ChevronRight, Cake, Calendar, Gift, Sparkles, Heart, Star, PartyPopper } from 'lucide-react'
 
@@ -10,6 +11,7 @@ import slide3 from '../assets/slide3.jpg'
 const slides = [slide1, slide2, slide3]
 
 export default function Dashboard() {
+  const { user } = useAuth()
   const [userName, setUserName] = useState('User')
   const [userRole, setUserRole] = useState('Employee')
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -26,11 +28,10 @@ export default function Dashboard() {
     }, 5000)
 
     return () => clearInterval(sliderInterval)
-  }, [])
+  }, [user])
 
   async function loadUser() {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
       const { data, error } = await supabase

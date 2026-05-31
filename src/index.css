@@ -48,6 +48,136 @@ body {
 }
 
 /* ========================================
+   LOGIN PAGE — fixed light card (not affected by app dark/light theme)
+   ======================================== */
+
+.login-page {
+  color-scheme: light;
+  isolation: isolate;
+}
+
+.login-page .login-card {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border-color: #e2e8f0 !important;
+}
+
+.login-page .login-card h1 {
+  color: #1e293b !important;
+}
+
+.login-page .login-card label,
+.login-page .login-card .login-label {
+  color: #334155 !important;
+}
+
+.login-page .login-card .login-tagline {
+  color: #059669 !important;
+}
+
+.login-page .login-card input {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+.login-page .login-card input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+.login-page .login-card input:-webkit-autofill,
+.login-page .login-card input:-webkit-autofill:hover,
+.login-page .login-card input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #f8fafc inset !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a !important;
+}
+
+.login-page .login-card .login-remember {
+  color: #334155 !important;
+}
+
+.login-page .login-card .login-forgot {
+  color: #d97706 !important;
+}
+
+.login-page .login-card .login-forgot:hover {
+  color: #b45309 !important;
+}
+
+.login-page .login-card .login-footer {
+  background-color: #f8fafc !important;
+  color: #64748b !important;
+  border-color: #e2e8f0 !important;
+}
+
+.login-page .login-card .login-captcha-box {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #334155 !important;
+}
+
+.login-page .login-card .login-error {
+  background-color: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #b91c1c !important;
+}
+
+.login-page .login-card svg {
+  color: #94a3b8;
+}
+
+.login-page a.login-forgot:hover {
+  color: #b45309 !important;
+}
+
+.login-logo-wrap {
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.login-logo-skeleton {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: login-logo-shimmer 1.2s ease-in-out infinite;
+}
+
+.login-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  display: block;
+}
+
+.login-logo-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+}
+
+@keyframes login-logo-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ========================================
    GLOBAL HOVER - GREEN ONLY, NO BLUE
    ======================================== */
 

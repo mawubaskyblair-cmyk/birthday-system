@@ -15,6 +15,21 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import toast from 'react-hot-toast'
 
+// Helper function to format time to Uganda/East Africa timezone
+function formatLocalTime(dateString) {
+  const date = new Date(dateString)
+  return date.toLocaleString('en-GB', {
+    timeZone: 'Africa/Nairobi',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  })
+}
+
 export default function AuditLogs() {
   const navigate = useNavigate()
   const [logs, setLogs] = useState([])
@@ -105,7 +120,7 @@ export default function AuditLogs() {
 
   function exportToExcel() {
     const exportData = logs.map(log => ({
-      'Timestamp': new Date(log.created_at).toLocaleString(),
+      'Timestamp': formatLocalTime(log.created_at),
       'User': log.user_email || 'System',
       'Action': log.action,
       'Description': log.description
@@ -124,10 +139,10 @@ export default function AuditLogs() {
     doc.text('Audit Logs Report', 14, 15)
     doc.setFontSize(10)
     doc.setTextColor(100, 100, 100)
-    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 22)
+    doc.text(`Generated: ${formatLocalTime(new Date().toISOString())}`, 14, 22)
     
     const tableData = logs.map(log => [
-      new Date(log.created_at).toLocaleString(),
+      formatLocalTime(log.created_at),
       log.user_email || 'System',
       log.action,
       log.description
@@ -145,7 +160,6 @@ export default function AuditLogs() {
     toast.success('Exported to PDF')
   }
 
-  // FIXED: Added LOGOUT case to the color function
   function getActionColor(action) {
     if (!action) return { bg: '#f1f5f9', text: '#475569', icon: '📋' }
     if (action.includes('LOGIN_SUCCESS')) return { bg: '#dcfce7', text: '#166534', icon: '✅' }
@@ -203,7 +217,7 @@ export default function AuditLogs() {
                 <div className="flex items-center gap-2 mt-1">
                   <Clock size={12} className="text-amber-500" />
                   <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                    Last updated: {lastUpdated.toLocaleTimeString()}
+                    Last updated: {new Date().toLocaleTimeString()}
                   </p>
                 </div>
               </div>
@@ -363,7 +377,7 @@ export default function AuditLogs() {
           </button>
         </div>
 
-        {/* Table */}
+        {/* Table - Fixed timezone */}
         {loading && logs.length === 0 ? (
           <div className="flex justify-center py-20">
             <div className="text-center">
@@ -398,9 +412,10 @@ export default function AuditLogs() {
                       const colors = getActionColor(log.action)
                       return (
                         <tr key={log.id} className="border-t transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50" style={{ borderColor: 'var(--border)' }}>
+                          {/* FIXED: Time now shows correct Uganda/East Africa time */}
                           <td className="py-3 px-4">
                             <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>
-                              {new Date(log.created_at).toLocaleString()}
+                              {formatLocalTime(log.created_at)}
                             </span>
                           </td>
                           <td className="py-3 px-4">
