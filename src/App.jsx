@@ -15,7 +15,6 @@ import CheckEmail from './pages/CheckEmail'
 import ResetPassword from './pages/ResetPassword'
 import { Toaster } from 'react-hot-toast'
 
-
 function App() {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -39,8 +38,14 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-900 via-zinc-800 to-stone-700 flex items-center justify-center">
-        <div className="text-amber-400 text-lg animate-pulse">
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--bg-primary)' }}
+      >
+        <div 
+          className="text-amber-500 text-lg animate-pulse"
+          style={{ color: 'var(--accent)' }}
+        >
           Loading...
         </div>
       </div>
@@ -49,12 +54,32 @@ function App() {
 
   return (
     <BrowserRouter>
-
       {/* Toast system (GLOBAL) */}
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster 
+        position="top-right" 
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            background: 'var(--bg-secondary)',
+            color: 'var(--text-primary)',
+            border: '1px solid var(--border)'
+          },
+          success: {
+            iconTheme: {
+              primary: '#f59e0b',
+              secondary: 'var(--bg-secondary)',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: 'var(--bg-secondary)',
+            },
+          },
+        }}
+      />
 
       <Routes>
-
         {/* AUTH ROUTES */}
         <Route
           path="/login"
@@ -82,25 +107,47 @@ function App() {
           element={session ? <Dashboard /> : <Navigate to="/login" />}
         />
 
+        <Route
+          path="/employees"
+          element={session ? <Employees /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/users"
+          element={session ? <Users /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/roles"
+          element={session ? <Roles /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/birthday-engine"
+          element={session ? <BirthdayEngine /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/audit-logs"
+          element={session ? <AuditLogs /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/profile"
+          element={session ? <Profile /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/settings"
+          element={session ? <Settings /> : <Navigate to="/login" />}
+        />
+
         {/* DEFAULT ROUTE */}
         <Route
           path="/"
           element={<Navigate to={session ? "/dashboard" : "/login"} />}
         />
-         
-         <Route path="/employees" element={session ? <Employees /> : <Navigate to="/login" />} />
-         <Route path="/roles" element={session ? <Roles /> : <Navigate to="/login" />} />
-         <Route path="/birthday-engine" element={session ? <BirthdayEngine /> : <Navigate to="/login" />} />
-         <Route path="/audit-logs" element={session ? <AuditLogs /> : <Navigate to="/login" />} />
-
-        <Route path="/profile" element={session ? <Profile /> : <Navigate to="/login" />} />
-        <Route path="/settings" element={session ? <Settings /> : <Navigate to="/login" />} />
-
-        <Route path="/users" element={session ? <Users /> : <Navigate to="/login" />} />
-
-
       </Routes>
-      
     </BrowserRouter>
   )
 }

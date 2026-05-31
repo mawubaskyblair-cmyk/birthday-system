@@ -1,39 +1,148 @@
 @import "tailwindcss";
 
+/* ========================================
+   THEME VARIABLES - NO BLUE ANYWHERE
+   ======================================== */
+
 :root {
-  --bg-primary: #e2e8f0;
+  /* Light Mode - Warm colors only, NO BLUE */
+  --bg-primary: #fef9f1;
   --bg-secondary: #ffffff;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --border: #cbd5e1;
+  --text-primary: #3b2f2a;
+  --text-secondary: #8b7355;
+  --border: #f0e4d0;
+  --sidebar-bg: #ffffff;
+  --card-bg: #ffffff;
+  --accent: #10b981;
+  --accent-light: #34d399;
+  --accent-dark: #059669;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
 }
 
 .dark {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --border: #334155;
+  /* Dark Mode - Warm colors only, NO BLUE */
+  --bg-primary: #1c1917;
+  --bg-secondary: #292524;
+  --text-primary: #f5f5f4;
+  --text-secondary: #a8a29e;
+  --border: #44403c;
+  --sidebar-bg: #1c1917;
+  --card-bg: #292524;
+  --accent: #10b981;
+  --accent-light: #34d399;
+  --accent-dark: #059669;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
 }
+
+/* ========================================
+   BASE BODY
+   ======================================== */
 
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
 
-/* Make sidebar and header use variables */
-.bg-white {
-  background-color: var(--bg-secondary) !important;
+/* ========================================
+   GLOBAL HOVER - GREEN ONLY, NO BLUE
+   ======================================== */
+
+/* Sidebar hover - GREEN */
+aside nav a:hover {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
 }
 
-.border-b, .border-t, .border-l, .border-r {
-  border-color: var(--border) !important;
+/* Sidebar active - GREEN */
+aside nav a.active {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #10b981 !important;
+  border-left-color: #10b981 !important;
 }
 
-.text-slate-700, .text-gray-700 {
-  color: var(--text-primary) !important;
+/* Table row hover - GREEN tint */
+tbody tr:hover {
+  background-color: rgba(16, 185, 129, 0.05) !important;
 }
 
-.text-slate-500, .text-gray-500 {
-  color: var(--text-secondary) !important;
+/* Button hover - GREEN */
+button:hover {
+  filter: brightness(1.05);
 }
+
+/* Link hover - GREEN, NO BLUE */
+a:hover {
+  color: #10b981 !important;
+}
+
+/* Dropdown items hover - GREEN */
+button.hover\:bg-gray-100:hover,
+.hover\:bg-gray-100:hover {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+}
+
+/* Focus rings - GREEN, NO BLUE */
+input:focus, select:focus, textarea:focus {
+  border-color: #10b981 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Remove ALL blue defaults */
+* {
+  -webkit-tap-highlight-color: rgba(16, 185, 129, 0.1);
+}
+
+/* Make sure NO blue appears anywhere */
+.text-blue-500, .text-blue-600, .text-blue-400,
+.bg-blue-500, .bg-blue-600, .bg-blue-400,
+.border-blue-500, .border-blue-600 {
+  color: #10b981 !important;
+  background-color: transparent !important;
+  border-color: #10b981 !important;
+}
+
+/* ========================================
+   UTILITY CLASSES - GREEN ONLY
+   ======================================== */
+
+.text-accent {
+  color: var(--accent);
+}
+
+.bg-accent {
+  background-color: var(--accent);
+}
+
+.border-accent {
+  border-color: var(--accent);
+}
+
+.hover\:bg-accent:hover {
+  background-color: var(--accent-dark);
+}
+
+
+  @keyframes confetti {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  }
+  .animate-confetti {
+    position: absolute;
+    animation: confetti 3s linear forwards;
+  }
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.5s ease forwards;
+  }
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
+  }

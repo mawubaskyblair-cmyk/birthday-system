@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Moon, Sun, Bell, Menu, X } from 'lucide-react'
+import { Moon, Sun, Bell, Menu, X, User, LogOut, Settings as SettingsIcon } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import useTheme from '../../hooks/useTheme'
+import Notifications from '../Notifications'
 
-export default function Header({ onMenuClick, sidebarOpen }) {
+export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
   const navigate = useNavigate()
-  const [dark, setDark] = useState(false)
+  const { dark, toggleTheme, toggleWithAnimation, systemPreference } = useTheme()
   const [time, setTime] = useState(new Date())
   const [userName, setUserName] = useState('User')
   const [role, setRole] = useState('User')
   const [notifOpen, setNotifOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   const roleMap = {
     1: 'Super Administrator',
@@ -18,40 +22,24 @@ export default function Header({ onMenuClick, sidebarOpen }) {
   }
 
   useEffect(() => {
-    loadTheme()
     loadUser()
+    loadUnreadCount()
 
-    const interval = setInterval(() => {
+    const timeInterval = setInterval(() => {
       setTime(new Date())
     }, 1000)
 
-    return () => clearInterval(interval)
-  }, [])
+    const notifInterval = setInterval(() => {
+      if (!notifOpen) {
+        loadUnreadCount()
+      }
+    }, 30000)
 
-  function loadTheme() {
-    const savedTheme = localStorage.getItem('theme')
-    const isDark = savedTheme === 'dark'
-    setDark(isDark)
-    
-    if (isDark) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
+    return () => {
+      clearInterval(timeInterval)
+      clearInterval(notifInterval)
     }
-  }
-
-  function toggleTheme() {
-    const newTheme = !dark
-    setDark(newTheme)
-    
-    if (newTheme) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    }
-  }
+  }, [notifOpen])
 
   async function loadUser() {
     const { data: { user } } = await supabase.auth.getUser()
@@ -72,10 +60,48 @@ export default function Header({ onMenuClick, sidebarOpen }) {
     }
   }
 
-  async function logout() {
-    await supabase.auth.signOut()
-    window.location.href = '/login'
+  async function loadUnreadCount() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    
+    const { count, error } = await supabase
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('is_read', false)
+    
+    if (!error) {
+      setUnreadCount(count || 0)
+    }
   }
+
+  // UPDATED: Logout function - NO manual created_at (let database handle it)
+  async function logout() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (user) {
+        await supabase.from('audit_logs').insert([{
+          user_id: user.id,
+          user_email: user.email,
+          action: 'LOGOUT',
+          description: 'User logged out successfully',
+          user_agent: navigator.userAgent
+          // created_at is omitted - Supabase will use DEFAULT now()
+        }])
+      }
+      
+      await supabase.auth.signOut()
+      window.location.href = '/login'
+    } catch (error) {
+      console.error('Logout error:', error)
+      await supabase.auth.signOut()
+      window.location.href = '/login'
+    }
+  }
+
+  const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  const formattedDate = time.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })
 
   return (
     <header 
@@ -87,95 +113,147 @@ export default function Header({ onMenuClick, sidebarOpen }) {
       }}
     >
       
-      {/* LEFT SIDE - Menu Button + Title */}
+      {/* LEFT SIDE */}
       <div className="flex items-center gap-3">
-        <button
-          onClick={onMenuClick}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 lg:hidden"
-          style={{ color: 'var(--text-primary)' }}
-        >
-          {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        {isMobile && (
+          <button
+            onClick={onMenuClick}
+            className="p-2 rounded-lg transition-all hover:scale-105 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+            style={{ 
+              backgroundColor: 'var(--bg-primary)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border)'
+            }}
+            aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+          >
+            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        )}
         
-        <div>
+        <div className="hidden sm:block">
           <h1 className="font-semibold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>
             Control Center
           </h1>
-          <p className="text-xs hidden sm:block" style={{ color: 'var(--text-secondary)' }}>
-            {time.toLocaleTimeString()}
+          <div className="flex items-center gap-2">
+            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+              {formattedTime}
+            </p>
+            <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>•</span>
+            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+              {formattedDate}
+            </p>
+          </div>
+        </div>
+
+        <div className="block sm:hidden">
+          <p className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>
+            {formattedTime}
           </p>
         </div>
       </div>
 
       {/* RIGHT SIDE */}
-      <div className="flex items-center gap-2 md:gap-4">
+      <div className="flex items-center gap-2 md:gap-3">
         
-        {/* DATE - Hidden on mobile */}
-        <span className="hidden md:block text-xs" style={{ color: 'var(--text-secondary)' }}>
-          {time.toLocaleDateString()}
-        </span>
-
-        {/* TIME - Visible on mobile */}
-        <span className="block md:hidden text-xs" style={{ color: 'var(--text-secondary)' }}>
-          {time.toLocaleTimeString()}
-        </span>
-
-        {/* THEME TOGGLE */}
+        {/* THEME TOGGLE BUTTON */}
         <button
-          onClick={toggleTheme}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-          style={{ color: 'var(--text-primary)' }}
+          onClick={toggleWithAnimation}
+          className="p-2 rounded-lg transition-all hover:scale-105 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+          style={{ 
+            backgroundColor: 'var(--bg-primary)',
+            color: 'var(--text-primary)',
+            border: '1px solid var(--border)'
+          }}
+          aria-label={dark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          title={dark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
           {dark ? <Sun size={18} className="text-amber-500" /> : <Moon size={18} />}
         </button>
+
+        {/* System preference indicator */}
+        {systemPreference !== null && (
+          <div className="hidden lg:block text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
+            {systemPreference ? '🌙 System Dark' : '☀️ System Light'}
+          </div>
+        )}
 
         {/* NOTIFICATIONS */}
         <div className="relative">
           <button
             onClick={() => setNotifOpen(!notifOpen)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 relative"
-            style={{ color: 'var(--text-primary)' }}
+            className="p-2 rounded-lg transition-all hover:scale-105 relative hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+            style={{ 
+              backgroundColor: 'var(--bg-primary)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border)'
+            }}
+            aria-label="Notifications"
           >
             <Bell size={18} />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500 text-white animate-pulse">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
           </button>
 
-          {notifOpen && (
-            <div 
-              className="absolute right-0 mt-2 w-72 rounded-xl border shadow-xl z-50"
-              style={{ 
-                backgroundColor: 'var(--bg-secondary)', 
-                borderColor: 'var(--border)',
-                color: 'var(--text-primary)'
-              }}
-            >
-              <div className="p-3 border-b" style={{ borderBottomColor: 'var(--border)' }}>
-                <span className="font-semibold">Notifications</span>
-              </div>
-              <div className="p-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                No new notifications
-              </div>
-            </div>
-          )}
+          <Notifications 
+            isOpen={notifOpen}
+            onClose={() => setNotifOpen(false)}
+            onMarkRead={() => loadUnreadCount()}
+          />
         </div>
 
         {/* ROLE BADGE */}
-        <span className="hidden sm:inline-block px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400">
+        <span 
+          className="hidden sm:inline-block px-2.5 py-1 text-xs font-medium rounded-full"
+          style={{ backgroundColor: '#10b981', color: 'white' }}
+        >
           {role}
         </span>
 
-        {/* USER AVATAR */}
-        <button
-          onClick={() => navigate('/profile')}
-          className="flex items-center gap-2"
-        >
-          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 flex items-center justify-center text-white font-bold text-sm">
-            {userName.charAt(0).toUpperCase()}
-          </div>
-          <span className="hidden md:block text-sm" style={{ color: 'var(--text-primary)' }}>
-            {userName}
-          </span>
-        </button>
+        {/* USER MENU */}
+        <div className="relative">
+          <button
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            className="flex items-center gap-2 transition-all hover:scale-105"
+            aria-label="User menu"
+          >
+            <div 
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md"
+              style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
+            >
+              {userName.charAt(0).toUpperCase()}
+            </div>
+            <span className="hidden md:block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+              {userName}
+            </span>
+          </button>
+
+          {/* User Dropdown Menu */}
+          {userMenuOpen && (
+            <div 
+              className="absolute right-0 mt-2 w-48 rounded-xl border shadow-xl z-50 overflow-hidden fade-in"
+              style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
+            >
+              <div className="px-4 py-3 border-b" style={{ borderBottomColor: 'var(--border)' }}>
+                <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{userName}</p>
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{role}</p>
+              </div>
+              <button
+                onClick={() => { 
+                  setUserMenuOpen(false)
+                  navigate('/profile')
+                }}
+                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm transition-colors hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                <User size={16} /> Profile
+              </button>
+              
+            </div>
+          )}
+        </div>
       </div>
     </header>
   )

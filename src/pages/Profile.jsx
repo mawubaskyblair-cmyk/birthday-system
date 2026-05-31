@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { addAuditLog } from '../lib/auditLog'
 import Layout from '../components/layout/Layout'
-import { ArrowLeft, Edit2, Save, X } from 'lucide-react'
+import { ArrowLeft, Edit2, Save, X, Camera, Mail, Phone, Briefcase, User, Lock, Shield } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function Profile() {
@@ -61,9 +61,6 @@ export default function Profile() {
     e.preventDefault()
     setSaving(true)
     
-    const oldUsername = formData.username
-    const newUsername = formData.username
-    
     const { error } = await supabase
       .from('users')
       .update({ 
@@ -75,7 +72,6 @@ export default function Profile() {
     if (error) {
       toast.error('Error: ' + error.message)
     } else {
-      // ADD AUDIT LOG FOR PROFILE UPDATE
       await addAuditLog('UPDATE_PROFILE', `Updated profile: username changed to ${formData.username}`)
       toast.success('Profile updated successfully')
       setEditing(false)
@@ -99,7 +95,6 @@ export default function Profile() {
     if (error) {
       toast.error('Error: ' + error.message)
     } else {
-      // ADD AUDIT LOG FOR PASSWORD CHANGE
       await addAuditLog('CHANGE_PASSWORD', 'Password changed')
       toast.success('Password changed successfully')
     }
@@ -109,133 +104,282 @@ export default function Profile() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center py-12">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-amber-500 border-t-transparent"></div>
+        <div className="flex justify-center items-center py-20">
+          <div className="text-center">
+            <div className="w-10 h-10 animate-spin rounded-full border-3 border-emerald-500 border-t-transparent mx-auto mb-3"></div>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Loading profile...</p>
+          </div>
         </div>
       </Layout>
     )
   }
 
+  // Get user initial for avatar
+  const userInitial = formData.username?.charAt(0).toUpperCase() || 'U'
+
   return (
     <Layout>
-      <div className="max-w-md mx-auto">
+      <div className="max-w-2xl mx-auto px-4 py-6">
         
+        {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-1 mb-4 text-gray-600 hover:text-gray-800 text-sm"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:scale-105 mb-6"
+          style={{ 
+            backgroundColor: 'var(--bg-secondary)', 
+            border: `1px solid var(--border)`,
+            color: 'var(--text-primary)'
+          }}
         >
           <ArrowLeft size={16} /> Back
         </button>
 
-        <div className="bg-white rounded-lg shadow border p-6">
+        {/* Profile Card */}
+        <div 
+          className="rounded-2xl shadow-xl overflow-hidden transition-all duration-300"
+          style={{ 
+            backgroundColor: 'var(--bg-secondary)',
+            border: '1px solid var(--border)'
+          }}
+        >
           
-          <div className="flex justify-between items-center mb-5 pb-2 border-b">
-            <h1 className="text-xl font-semibold text-gray-800">My Profile</h1>
-            {!editing && (
-              <button
-                onClick={() => setEditing(true)}
-                className="flex items-center gap-1 text-amber-500 hover:text-amber-600 text-sm"
-              >
-                <Edit2 size={14} /> Edit
-              </button>
-            )}
+          {/* Cover/Banner Area */}
+          <div 
+            className="relative h-32"
+            style={{
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+            }}
+          >
+            {/* Avatar - Centered on banner */}
+            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
+              <div className="relative">
+                <div 
+                  className="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold shadow-xl border-4"
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    color: 'white',
+                    borderColor: 'var(--bg-secondary)'
+                  }}
+                >
+                  {userInitial}
+                </div>
+                <button 
+                  className="absolute bottom-0 right-0 p-1.5 rounded-full shadow-md transition-all hover:scale-110"
+                  style={{
+                    backgroundColor: 'var(--bg-primary)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-primary)'
+                  }}
+                  title="Change avatar (coming soon)"
+                >
+                  <Camera size={14} />
+                </button>
+              </div>
+            </div>
           </div>
 
-          {editing ? (
-            <form onSubmit={handleUpdateProfile}>
-              <div className="mb-4">
-                <label className="block text-xs text-gray-500 mb-1">Username</label>
-                <input
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
-                  required
-                />
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-xs text-gray-500 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  disabled
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
-                />
-                <p className="text-xs text-gray-400 mt-1">Email cannot be changed</p>
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-xs text-gray-500 mb-1">Phone Number</label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
-                  placeholder="Enter phone number"
-                />
-              </div>
-              
-              <div className="mb-5">
-                <label className="block text-xs text-gray-500 mb-1">Role</label>
-                <input
-                  type="text"
-                  value={formData.role}
-                  disabled
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-amber-600 font-medium cursor-not-allowed"
-                />
-              </div>
-              
-              <div className="flex gap-2">
-                <button 
-                  type="submit" 
-                  disabled={saving}
-                  className="flex-1 bg-amber-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-amber-600 transition disabled:opacity-50"
+          {/* Profile Content */}
+          <div className="pt-16 pb-8 px-6">
+            
+            {/* Edit Button */}
+            <div className="flex justify-end mb-4">
+              {!editing && (
+                <button
+                  onClick={() => setEditing(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:scale-105"
+                  style={{
+                    backgroundColor: 'var(--bg-primary)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--accent)'
+                  }}
                 >
-                  <Save size={14} className="inline mr-1" /> Save
+                  <Edit2 size={14} /> Edit Profile
                 </button>
-                <button 
-                  type="button" 
-                  onClick={() => setEditing(false)} 
-                  className="flex-1 border border-gray-300 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition"
-                >
-                  <X size={14} className="inline mr-1" /> Cancel
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div>
-              <div className="mb-4 pb-2">
-                <p className="text-xs text-gray-400">Username</p>
-                <p className="text-base font-medium text-gray-800">{formData.username}</p>
-              </div>
-              
-              <div className="mb-4 pb-2">
-                <p className="text-xs text-gray-400">Email</p>
-                <p className="text-base text-gray-700">{formData.email}</p>
-              </div>
-              
-              {formData.phone && (
-                <div className="mb-4 pb-2">
-                  <p className="text-xs text-gray-400">Phone</p>
-                  <p className="text-base text-gray-700">{formData.phone}</p>
-                </div>
               )}
-              
-              <div className="mb-5 pb-2">
-                <p className="text-xs text-gray-400">Role</p>
-                <p className="text-base font-medium text-amber-600">{formData.role}</p>
-              </div>
-              
-              <button
-                onClick={handleChangePassword}
-                disabled={saving}
-                className="text-amber-500 hover:text-amber-600 text-sm font-medium"
-              >
-                Change Password →
-              </button>
             </div>
-          )}
+
+            {/* Username Title */}
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                {formData.username}
+              </h1>
+              <span 
+                className="inline-block px-3 py-1 text-xs font-medium rounded-full mt-2"
+                style={{
+                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                  color: '#10b981'
+                }}
+              >
+                {formData.role}
+              </span>
+            </div>
+
+            {/* Edit Form */}
+            {editing ? (
+              <form onSubmit={handleUpdateProfile} className="space-y-5">
+                {/* Username Field */}
+                <div className="space-y-1">
+                  <label className="flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+                    <User size={14} /> Username
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    style={{
+                      backgroundColor: 'var(--bg-primary)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-primary)'
+                    }}
+                    required
+                  />
+                </div>
+                
+                {/* Email Field (Read Only) */}
+                <div className="space-y-1">
+                  <label className="flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+                    <Mail size={14} /> Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    disabled
+                    className="w-full px-4 py-2.5 rounded-xl text-sm opacity-70 cursor-not-allowed"
+                    style={{
+                      backgroundColor: 'var(--bg-primary)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-secondary)'
+                    }}
+                  />
+                  <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Email cannot be changed</p>
+                </div>
+                
+                {/* Phone Field */}
+                <div className="space-y-1">
+                  <label className="flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+                    <Phone size={14} /> Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    style={{
+                      backgroundColor: 'var(--bg-primary)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-primary)'
+                    }}
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+                
+                {/* Role Field (Read Only) */}
+                <div className="space-y-1">
+                  <label className="flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+                    <Briefcase size={14} /> Role
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.role}
+                    disabled
+                    className="w-full px-4 py-2.5 rounded-xl text-sm font-medium opacity-70 cursor-not-allowed"
+                    style={{
+                      backgroundColor: 'var(--bg-primary)',
+                      border: '1px solid var(--border)',
+                      color: '#10b981'
+                    }}
+                  />
+                </div>
+                
+                {/* Form Buttons */}
+                <div className="flex gap-3 pt-4">
+                  <button 
+                    type="submit" 
+                    disabled={saving}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all hover:scale-105 disabled:opacity-50"
+                    style={{
+                      backgroundColor: '#10b981',
+                      color: 'white'
+                    }}
+                  >
+                    <Save size={16} /> {saving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setEditing(false)} 
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all hover:scale-105"
+                    style={{
+                      backgroundColor: 'var(--bg-primary)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-secondary)'
+                    }}
+                  >
+                    <X size={16} /> Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              /* View Mode */
+              <div className="space-y-5">
+                {/* Email */}
+                <div className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
+                    <Mail size={18} style={{ color: '#10b981' }} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Email Address</p>
+                    <p className="text-base font-medium mt-0.5" style={{ color: 'var(--text-primary)' }}>{formData.email}</p>
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
+                    <Phone size={18} style={{ color: '#10b981' }} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Phone Number</p>
+                    <p className="text-base font-medium mt-0.5" style={{ color: 'var(--text-primary)' }}>
+                      {formData.phone || 'Not provided'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Role */}
+                <div className="flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
+                    <Shield size={18} style={{ color: '#10b981' }} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Role</p>
+                    <p className="text-base font-medium mt-0.5" style={{ color: '#10b981' }}>{formData.role}</p>
+                  </div>
+                </div>
+
+                {/* Change Password Link */}
+                <div className="pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
+                  <button
+                    onClick={handleChangePassword}
+                    disabled={saving}
+                    className="flex items-center gap-2 text-sm font-medium transition-all hover:gap-3"
+                    style={{ color: '#10b981' }}
+                  >
+                    <Lock size={16} />
+                    Change Password
+                    <span className="text-xs opacity-70">→</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Security Note */}
+        <div className="mt-6 text-center">
+          <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+            🔒 Your information is securely stored and encrypted
+          </p>
         </div>
       </div>
     </Layout>

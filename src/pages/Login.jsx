@@ -17,6 +17,23 @@ export default function Login() {
   const [captchaError, setCaptchaError] = useState('')
   const [captchaVerified, setCaptchaVerified] = useState(false)
 
+  // Write to audit log - NO manual created_at (let database handle it)
+  async function writeToAuditLog(userId, userEmail, action, description) {
+    try {
+      const { error } = await supabase.from('audit_logs').insert([{
+        user_id: userId || null,
+        user_email: userEmail || email,
+        action: action,
+        description: description,
+        user_agent: navigator.userAgent
+        // created_at is omitted - Supabase will use DEFAULT now()
+      }])
+      if (error) console.error('Audit log error:', error)
+    } catch (err) {
+      console.error('Failed to write audit log:', err)
+    }
+  }
+
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail')
     if (savedEmail) {
@@ -78,16 +95,19 @@ export default function Login() {
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
     if (error) {
+      await writeToAuditLog(null, email, 'LOGIN_FAILED', `Failed login attempt: ${error.message}`)
       setError(error.message)
       generateNewCaptcha()
       setCaptchaVerified(false)
-    } else {
+    } else if (data?.user) {
+      await writeToAuditLog(data.user.id, data.user.email, 'LOGIN_SUCCESS', 'User logged in successfully')
+      
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', email)
       } else {
@@ -99,7 +119,6 @@ export default function Login() {
   }
 
   return (
-    // ONLY BACKGROUND CHANGED - Mixed medium dark + medium light dark
     <div className="relative min-h-screen overflow-hidden 
     bg-gradient-to-br from-stone-900 via-zinc-800 to-stone-700 
     flex items-center justify-center p-4">
@@ -118,6 +137,7 @@ export default function Login() {
                   src="/birthday-photo.jpg"
                   alt="Logo"
                   className="h-14 w-14 rounded-lg object-cover"
+                  style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
                 />
               </div>
             </div>
@@ -239,7 +259,7 @@ export default function Login() {
           </form>
 
           <div className="border-t border-slate-100 bg-slate-50 px-6 py-2.5 text-center">
-            <p className="text-[11px] font-medium text-slate-400">🔒 A Secure platform </p>
+            <p className="text-[11px] font-medium text-slate-400">🔒 A Secure platform</p>
           </div>
         </div>
       </div>

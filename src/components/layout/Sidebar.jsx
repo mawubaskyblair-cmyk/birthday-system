@@ -19,7 +19,7 @@ import {
 import { supabase } from '../../lib/supabase'
 import { getCurrentUserPermissions } from '../../lib/permissions'
 
-export default function Sidebar({ onCollapseChange }) {
+export default function Sidebar({ onCollapseChange, isMobile = false, mobileOpen = false, onMobileClose }) {
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -33,35 +33,50 @@ export default function Sidebar({ onCollapseChange }) {
 
   async function loadUserPermissions() {
     try {
-      const { role, permissions } =
-        await getCurrentUserPermissions()
-
+      const { role, permissions } = await getCurrentUserPermissions()
       setUserRole(role || 'Employee')
       setUserPermissions(permissions || [])
     } catch (error) {
-      console.error(
-        'Failed to load permissions:',
-        error
-      )
+      console.error('Failed to load permissions:', error)
     }
   }
 
+  // UPDATED: Logout function - NO manual created_at (let database handle it)
   const handleLogout = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (user) {
+        await supabase.from('audit_logs').insert([{
+          user_id: user.id,
+          user_email: user.email,
+          action: 'LOGOUT',
+          description: 'User logged out successfully',
+          user_agent: navigator.userAgent
+          // created_at is omitted - Supabase will use DEFAULT now()
+        }])
+      }
+      
       await supabase.auth.signOut()
       navigate('/login')
     } catch (error) {
       console.error('Logout error:', error)
+      await supabase.auth.signOut()
+      navigate('/login')
     }
   }
 
   const toggleCollapse = () => {
     const newState = !collapsed
-
     setCollapsed(newState)
-
     if (onCollapseChange) {
       onCollapseChange(newState)
+    }
+  }
+
+  const closeMobileMenu = () => {
+    if (onMobileClose) {
+      onMobileClose()
     }
   }
 
@@ -140,10 +155,7 @@ export default function Sidebar({ onCollapseChange }) {
       items: section.items.filter(item => {
         if (item.path === '/dashboard') return true
         if (!item.permission) return true
-
-        return userPermissions.includes(
-          item.permission
-        )
+        return userPermissions.includes(item.permission)
       })
     }))
     .filter(section => section.items.length > 0)
@@ -151,7 +163,7 @@ export default function Sidebar({ onCollapseChange }) {
   return (
     <aside
       className={`h-full flex flex-col shadow-xl transition-all duration-300 ${
-        collapsed ? 'w-20' : 'w-64'
+        isMobile ? 'w-64' : collapsed ? 'w-20' : 'w-64'
       }`}
       style={{
         backgroundColor: 'var(--bg-secondary)',
@@ -160,89 +172,66 @@ export default function Sidebar({ onCollapseChange }) {
     >
       {/* Logo Section */}
       <div
-        className={`p-4 border-b ${
-          collapsed ? 'text-center' : ''
-        }`}
-        style={{
-          borderBottomColor: 'var(--border)'
-        }}
+        className={`p-4 border-b ${collapsed && !isMobile ? 'text-center' : ''}`}
+        style={{ borderBottomColor: 'var(--border)' }}
       >
         <div
-          className={`flex items-center ${
-            collapsed
-              ? 'justify-center'
-              : 'gap-2'
-          }`}
+          className={`flex items-center ${collapsed && !isMobile ? 'justify-center' : 'gap-2'}`}
         >
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 flex items-center justify-center shadow-md">
-            <span className="text-white text-sm">
-              🎂
-            </span>
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md flex-shrink-0">
+            <span className="text-white text-sm">🎂</span>
           </div>
 
-          {!collapsed && (
+          {(!collapsed || isMobile) && (
             <span
-              className="font-bold text-lg"
-              style={{
-                color: 'var(--text-primary)'
-              }}
+              className="font-bold text-lg truncate"
+              style={{ color: 'var(--text-primary)' }}
             >
               BirthdayTracker
             </span>
           )}
         </div>
 
-        {!collapsed && (
+        {(!collapsed || isMobile) && (
           <p
-            className="text-xs mt-1"
-            style={{
-              color: 'var(--text-secondary)'
-            }}
+            className="text-xs mt-1 truncate"
+            style={{ color: 'var(--text-secondary)' }}
           >
             {userRole} System
           </p>
         )}
       </div>
 
-      {/* Collapse Button */}
-      <div className="px-3 pt-3">
-        <button
-          onClick={toggleCollapse}
-          className="flex w-full items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-gray-100 dark:hover:bg-gray-800"
-          style={{
-            color: 'var(--text-secondary)'
-          }}
-        >
-          {collapsed ? (
-            <ChevronRight size={18} />
-          ) : (
-            <ChevronLeft size={18} />
-          )}
-
-          {!collapsed && (
-            <span>Collapse menu</span>
-          )}
-        </button>
-      </div>
+      {/* Collapse Button - Desktop only */}
+      {!isMobile && (
+        <div className="px-3 pt-3">
+          <button
+            onClick={toggleCollapse}
+            className="flex w-full items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            {collapsed ? (
+              <ChevronRight size={18} />
+            ) : (
+              <>
+                <ChevronLeft size={18} />
+                <span>Collapse menu</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-4 overflow-y-auto">
         {filteredMenuItems.map(section => (
           <div key={section.group}>
-            {!collapsed && (
+            {(!collapsed || isMobile) && (
               <div className="flex items-center gap-2 px-3 mb-2">
-                <section.icon
-                  size={14}
-                  style={{
-                    color: '#b45309'
-                  }}
-                />
-
+                <section.icon size={14} style={{ color: '#10b981' }} />
                 <p
                   className="text-[11px] font-semibold uppercase tracking-wider"
-                  style={{
-                    color: '#b45309'
-                  }}
+                  style={{ color: '#10b981' }}
                 >
                   {section.group}
                 </p>
@@ -251,37 +240,27 @@ export default function Sidebar({ onCollapseChange }) {
 
             <div className="space-y-1">
               {section.items.map(item => {
-                const isActive =
-                  location.pathname === item.path
+                const isActive = location.pathname === item.path
 
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    title={
-                      collapsed
-                        ? item.label
-                        : ''
-                    }
+                    onClick={closeMobileMenu}
+                    title={collapsed && !isMobile ? item.label : ''}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-amber-500/15 text-amber-500 border-l-2 border-amber-500'
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                    } ${
-                      collapsed
-                        ? 'justify-center'
-                        : ''
-                    }`}
+                        ? 'bg-emerald-500/15 text-emerald-500 border-l-2 border-emerald-500'
+                        : 'hover:bg-emerald-50 dark:hover:bg-emerald-900/20'
+                    } ${collapsed && !isMobile ? 'justify-center' : ''}`}
                     style={{
-                      color: isActive
-                        ? undefined
-                        : 'var(--text-secondary)'
+                      color: isActive ? undefined : 'var(--text-secondary)'
                     }}
                   >
-                    <item.icon size={18} />
-
-                    {!collapsed && (
-                      <span>{item.label}</span>
+                    <item.icon size={18} className="flex-shrink-0" />
+                    
+                    {(!collapsed || isMobile) && (
+                      <span className="truncate">{item.label}</span>
                     )}
                   </Link>
                 )
@@ -291,38 +270,31 @@ export default function Sidebar({ onCollapseChange }) {
         ))}
       </nav>
 
-      {/* Logout */}
+      {/* Logout Section */}
       <div
         className="p-3 border-t"
-        style={{
-          borderTopColor: 'var(--border)'
-        }}
+        style={{ borderTopColor: 'var(--border)' }}
       >
         <button
           onClick={handleLogout}
-          title={collapsed ? 'Logout' : ''}
+          title={collapsed && !isMobile ? 'Logout' : ''}
           className={`flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-            collapsed
-              ? 'justify-center'
-              : ''
+            collapsed && !isMobile ? 'justify-center' : ''
           }`}
           style={{
-            background:
-              'linear-gradient(135deg, rgb(228,54,54) 0%, rgb(196,136,33) 100%)',
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
             color: 'white'
           }}
         >
-          <LogOut size={18} />
-
-          {!collapsed && <span>Logout</span>}
+          <LogOut size={18} className="flex-shrink-0" />
+          
+          {(!collapsed || isMobile) && <span>Logout</span>}
         </button>
 
-        {!collapsed && (
+        {(!collapsed || isMobile) && (
           <p
             className="text-[10px] text-center mt-3"
-            style={{
-              color: 'var(--text-secondary)'
-            }}
+            style={{ color: 'var(--text-secondary)' }}
           >
             v2.0
           </p>
