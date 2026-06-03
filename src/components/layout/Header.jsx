@@ -13,6 +13,7 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
   const [time, setTime] = useState(new Date())
   const [userName, setUserName] = useState('User')
   const [role, setRole] = useState('User')
+  const [avatarUrl, setAvatarUrl] = useState(null)
   const [notifOpen, setNotifOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
@@ -48,16 +49,18 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
 
     const { data: userData } = await supabase
       .from('users')
-      .select('username, role_id')
+      .select('username, role_id, avatar_url')
       .eq('id', user.id)
       .single()
 
     if (userData) {
       setUserName(userData.username || user.email.split('@')[0])
       setRole(roleMap[userData.role_id] || 'User')
+      setAvatarUrl(userData.avatar_url || null)
     } else {
       setUserName(user.email.split('@')[0])
       setRole('Employee')
+      setAvatarUrl(null)
     }
   }
 
@@ -187,33 +190,59 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
           {role}
         </span>
 
-        {/* USER MENU - Only Profile, NO Settings, NO Logout */}
+        {/* USER MENU - With Profile Image */}
         <div className="relative">
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
             className="flex items-center gap-2 transition-all hover:scale-105"
             aria-label="User menu"
           >
-            <div 
-              className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md"
-              style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
-            >
-              {userName.charAt(0).toUpperCase()}
-            </div>
+            {/* Avatar with Profile Image */}
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={userName}
+                className="w-8 h-8 rounded-full object-cover shadow-md"
+              />
+            ) : (
+              <div 
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md"
+                style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
+              >
+                {userName.charAt(0).toUpperCase()}
+              </div>
+            )}
             <span className="hidden md:block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
               {userName}
             </span>
           </button>
 
-          {/* User Dropdown Menu - Only Profile, NO Settings, NO Logout */}
+          {/* User Dropdown Menu - Only Profile */}
           {userMenuOpen && (
             <div 
               className="absolute right-0 mt-2 w-48 rounded-xl border shadow-xl z-50 overflow-hidden fade-in"
               style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
             >
-              <div className="px-4 py-3 border-b" style={{ borderBottomColor: 'var(--border)' }}>
-                <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{userName}</p>
-                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{role}</p>
+              {/* User Info with Profile Image in Dropdown */}
+              <div className="px-4 py-3 border-b flex items-center gap-3" style={{ borderBottomColor: 'var(--border)' }}>
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={userName}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div 
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-base"
+                    style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
+                  >
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{userName}</p>
+                  <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{role}</p>
+                </div>
               </div>
               <button
                 onClick={() => { 
@@ -225,8 +254,6 @@ export default function Header({ onMenuClick, sidebarOpen, isMobile = false }) {
               >
                 <User size={16} /> Profile
               </button>
-              {/* NO Settings button */}
-              {/* NO Logout button */}
             </div>
           )}
         </div>
