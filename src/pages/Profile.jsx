@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { addAuditLog } from '../lib/auditLog'
 import Layout from '../components/layout/Layout'
-import { ArrowLeft, Edit2, Save, X, Camera, Mail, Phone, Briefcase, User, Lock, Shield } from 'lucide-react'
+import { ArrowLeft, Edit2, Save, X, Camera, Mail, Phone, Briefcase, User, Lock, Shield, Trash2, Upload } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function Profile() {
@@ -14,6 +14,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState(null)
   
   const [formData, setFormData] = useState({
     username: '',
@@ -28,13 +30,13 @@ export default function Profile() {
 
   async function loadProfile() {
     setLoading(true)
-
     setUser(authUser)
 
     if (authUser) {
+      // Get user profile data
       const { data } = await supabase
         .from('users')
-        .select('username, phone, role_id')
+        .select('username, phone, role_id, avatar_url')
         .eq('id', authUser.id)
         .single()
       
@@ -54,8 +56,106 @@ export default function Profile() {
         phone: data?.phone || '',
         role: roleName
       })
+      
+      setAvatarUrl(data?.avatar_url || null)
     }
     setLoading(false)
+  }
+
+  // Upload avatar image
+  async function uploadAvatar(event) {
+    try {
+      setUploading(true)
+      const file = event.target.files[0]
+      
+      if (!file) return
+      
+      // Check file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Image must be less than 2MB')
+        return
+      }
+      
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Only image files are allowed')
+        return
+      }
+      
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${authUser.id}-${Date.now()}.${fileExt}`
+      const filePath = `avatars/${fileName}`
+      
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file)
+      
+      if (uploadError) throw uploadError
+      
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath)
+      
+      // Update user profile with avatar URL
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ avatar_url: publicUrl })
+        .eq('id', authUser.id)
+      
+      if (updateError) throw updateError
+      
+      setAvatarUrl(publicUrl)
+      await addAuditLog('UPDATE_PROFILE', `Updated profile picture`)
+      toast.success('Profile picture updated!')
+      
+    } catch (error) {
+      toast.error('Error uploading image: ' + error.message)
+    } finally {
+      setUploading(false)
+    }
+  }
+  
+  // Delete avatar image
+  async function deleteAvatar() {
+    if (!avatarUrl) return
+    
+    const confirm = window.confirm('Are you sure you want to remove your profile picture?')
+    if (!confirm) return
+    
+    try {
+      setUploading(true)
+      
+      // Extract file path from URL
+      const urlParts = avatarUrl.split('/')
+      const fileName = urlParts[urlParts.length - 1]
+      const filePath = `avatars/${fileName}`
+      
+      // Delete from storage
+      const { error: deleteError } = await supabase.storage
+        .from('avatars')
+        .remove([filePath])
+      
+      if (deleteError) console.error('Storage delete error:', deleteError)
+      
+      // Update user profile - remove avatar URL
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ avatar_url: null })
+        .eq('id', authUser.id)
+      
+      if (updateError) throw updateError
+      
+      setAvatarUrl(null)
+      await addAuditLog('UPDATE_PROFILE', `Removed profile picture`)
+      toast.success('Profile picture removed!')
+      
+    } catch (error) {
+      toast.error('Error removing image: ' + error.message)
+    } finally {
+      setUploading(false)
+    }
   }
 
   async function handleUpdateProfile(e) {
@@ -115,9 +215,6 @@ export default function Profile() {
     )
   }
 
-  // Get user initial for avatar
-  const userInitial = formData.username?.charAt(0).toUpperCase() || 'U'
-
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-6">
@@ -153,34 +250,74 @@ export default function Profile() {
           >
             {/* Avatar - Centered on banner */}
             <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
-              <div className="relative">
-                <div 
-                  className="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold shadow-xl border-4"
-                  style={{
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    color: 'white',
-                    borderColor: 'var(--bg-secondary)'
-                  }}
-                >
-                  {userInitial}
-                </div>
-                <button 
-                  className="absolute bottom-0 right-0 p-1.5 rounded-full shadow-md transition-all hover:scale-110"
+              <div className="relative group">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full object-cover shadow-xl border-4"
+                    style={{ borderColor: 'var(--bg-secondary)' }}
+                  />
+                ) : (
+                  <div 
+                    className="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold shadow-xl border-4"
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      color: 'white',
+                      borderColor: 'var(--bg-secondary)'
+                    }}
+                  >
+                    {formData.username?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                )}
+                
+                {/* Upload Button */}
+                <label 
+                  className="absolute bottom-0 right-0 p-1.5 rounded-full shadow-md transition-all hover:scale-110 cursor-pointer"
                   style={{
                     backgroundColor: 'var(--bg-primary)',
                     border: '1px solid var(--border)',
                     color: 'var(--text-primary)'
                   }}
-                  title="Change avatar (coming soon)"
+                  title="Upload profile picture"
                 >
                   <Camera size={14} />
-                </button>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={uploadAvatar}
+                    disabled={uploading}
+                    className="hidden"
+                  />
+                </label>
+                
+                {/* Delete Button - Only shows if avatar exists */}
+                {avatarUrl && (
+                  <button
+                    onClick={deleteAvatar}
+                    disabled={uploading}
+                    className="absolute -top-2 -right-2 p-1.5 rounded-full shadow-md transition-all hover:scale-110 bg-red-500 text-white"
+                    title="Remove profile picture"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                )}
               </div>
             </div>
           </div>
 
           {/* Profile Content */}
           <div className="pt-16 pb-8 px-6">
+            
+            {/* Upload Status */}
+            {uploading && (
+              <div className="text-center mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs">
+                  <div className="w-3 h-3 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></div>
+                  Uploading...
+                </div>
+              </div>
+            )}
             
             {/* Edit Button */}
             <div className="flex justify-end mb-4">
