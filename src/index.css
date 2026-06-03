@@ -276,3 +276,22 @@ input:focus, select:focus, textarea:focus {
   .hover\:scale-102:hover {
     transform: scale(1.02);
   }
+
+  /* Slide up animation for mobile bottom sheet */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Safe area for iPhone notch/bottom bar */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
